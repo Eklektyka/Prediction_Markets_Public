@@ -62,6 +62,26 @@ read_data <- function(input_file) {
   
   df <- read_csv(input_file)
   
+  ##############################################################
+  ####### DEBUGGING TEST FOR CPI HEADLINE DATA-- START #########
+  ##############################################################
+  
+  # df <- read.csv('data/trade_level_data/trade_level_data_headline_cpi_releases.csv')
+  # 
+  # # let's look at an example I know disagrees with the Kalshi website first, Dec 2023
+  # 
+  # 
+  # # df <- df %>% filter(grepl("^CPIYOY-23DEC", ticker))
+  # 
+  # 
+  # # There are lots of trades at the start of the sample in the lower bins, but they don't appear?
+  # 
+  # df <- df %>% filter(as_date(ymd_hms(created_time)) < as.Date('2023-12-18'))
+  
+  ##############################################################
+  ####### DEBUGGING TEST FOR CPI HEADLINE DATA-- END #########
+  ##############################################################
+  
   # Convert datetime and extract date
   df <- df %>%
     mutate(created_time = as.POSIXct(created_time, format = "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC"),
@@ -88,20 +108,15 @@ read_data <- function(input_file) {
 #' @param df A data frame containing trade-level options data with columns: date, contract_preamble, strike, yes_price, count (volume)
 #' @return A data frame with daily last prices and total volume per contract and strike.
 convert_to_daily <- function(df) {
-  
-  df <- df %>% group_by(date, contract_preamble, strike) %>% arrange (desc(date)) %>% # for each market on a specfic day
-    
-    reframe(date=date,
-            contract_preamble = contract_preamble,
-            strike = strike,
-            yes_price = last(yes_price, count), # get the last price as the day's value
-            daily_volume = sum(count)) %>% # get the volume traded as sum of contracts
-    
-    distinct() %>%
-    
-    arrange(contract_preamble, strike, date) # arrange by contract, strike, date
-  
-  return(df)
+  df %>%
+    group_by(date, contract_preamble, strike) %>%
+    arrange(created_time, .by_group = TRUE) %>%
+    summarise(
+      yes_price    = dplyr::last(yes_price),
+      daily_volume = sum(count),
+      .groups = "drop"
+    ) %>%
+    arrange(contract_preamble, strike, date)
 }
 
 #' Fill missing days in daily data with last known price (from a previous day)
@@ -138,7 +153,7 @@ fill_dataless_days <- function(df) {
   
   # fill NA rows with last price and fill in 0 for daily volume on these days
   df <- df %>%
-    group_by(strike) %>%
+    group_by(contract_preamble, strike) %>%
     fill(yes_price, .direction = "down") %>%
     ungroup() %>% mutate(
       daily_volume = ifelse(is.na(daily_volume), 0, daily_volume)
@@ -375,24 +390,23 @@ extract_distributions <- function(input_file, output_distributions, output_momen
 }
 
 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
-#                       output_distributions = 'data/daily_distribution_data/daily_distributions_fed_levels.csv',
-#                       output_moments = 'data/daily_moments_data/daily_moments_fed_levels.csv',
-#                       strike_int = 0.25,
-#                       days_before_horizon = 180)
-# 
-# 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
-#                       output_distributions = 'data/daily_distribution_data/daily_distributions_headline_cpi_releases.csv',
-#                       output_moments = 'data/daily_moments_data/daily_moments_headline_cpi_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
+extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
+                      output_distributions = 'data/daily_distribution_data/daily_distributions_fed_levels.csv',
+                      output_moments = 'data/daily_moments_data/daily_moments_fed_levels.csv',
+                      strike_int = 0.25,
+                      days_before_horizon = 180)
 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
-#                       output_distributions = 'data/daily_distribution_data/daily_distributions_unemployment_releases.csv',
-#                       output_moments = 'data/daily_moments_data/daily_moments_unemployment_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
+extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
+                      output_distributions = 'data/daily_distribution_data/daily_distributions_headline_cpi_releases.csv',
+                      output_moments = 'data/daily_moments_data/daily_moments_headline_cpi_releases.csv',
+                      strike_int = 0.1,
+                      days_before_horizon = 30)
+
+extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
+                      output_distributions = 'data/daily_distribution_data/daily_distributions_unemployment_releases.csv',
+                      output_moments = 'data/daily_moments_data/daily_moments_unemployment_releases.csv',
+                      strike_int = 0.1,
+                      days_before_horizon = 30)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
                       output_distributions = 'data/daily_distribution_data/daily_distributions_core_cpi_releases.csv',
