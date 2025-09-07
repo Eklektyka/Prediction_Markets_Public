@@ -179,13 +179,15 @@ fill_dataless_days <- function(df) {
 clean_data <- function(df) {
   
   # remove all observations further than 6 months before contract expiry
-  df <- df %>%
-    filter(
-      date >= expiry_date - months(6),
-    ) %>%
-    arrange(contract_preamble, strike, date)
+  # df <- df %>% mutate(will_remove = (date >= expiry_date - months(6)))
+    # filter(
+    #   date >= expiry_date - months(6),
+    # ) %>%
+    # arrange(contract_preamble, strike, date)
   
 
+    df <- df %>% arrange(contract_preamble, strike, date)
+  
   # sometimes there are clear pricing errors in Kalshi contracts--
   # a strike that is both cheaper and covers the occurence of another contract
   # In this case, we assume that the strictly worse contract actually has an

@@ -28,15 +28,15 @@ HEARTBEAT_SECONDS = 15
 MAX_MINUTES = None                     # e.g. 60 to auto-stop after 1 hour
 
 fed_event_slugs = [
-#    "fed-interest-rates-march-2022","fed-interest-rates-may-2022","fed-interest-rates-june-2022",
-#    "fed-interest-rates-july-2022","fed-interest-rates-september-2022","fed-interest-rates-november-2022",
-#    "fed-interest-rates-december-2022",
-#    "fed-interest-rates-february-2023","fed-interest-rates-march-2023","fed-interest-rates-may-2023",
-#    "fed-interest-rates-june-2023","fed-interest-rates-july-2023","fed-interest-rates-september-2023",
-#    "fed-interest-rates-november-2023","fed-interest-rates-december-2023",
-#    "fed-interest-rates-january-2024","fed-interest-rates-march-2024","fed-interest-rates-may-2024",
-#    "fed-interest-rates-june-2024","fed-interest-rates-july-2024","fed-interest-rates-september-2024",
-#    "fed-interest-rates-november-2024","fed-interest-rates-december-2024",
+   "fed-interest-rates-march-2022","fed-interest-rates-may-2022","fed-interest-rates-june-2022",
+   "fed-interest-rates-july-2022","fed-interest-rates-september-2022","fed-interest-rates-november-2022",
+   "fed-interest-rates-december-2022",
+   "fed-interest-rates-february-2023","fed-interest-rates-march-2023","fed-interest-rates-may-2023",
+   "fed-interest-rates-june-2023","fed-interest-rates-july-2023","fed-interest-rates-september-2023",
+   "fed-interest-rates-november-2023","fed-interest-rates-december-2023",
+   "fed-interest-rates-january-2024","fed-interest-rates-march-2024","fed-interest-rates-may-2024",
+   "fed-interest-rates-june-2024","fed-interest-rates-july-2024","fed-interest-rates-september-2024",
+   "fed-interest-rates-november-2024","fed-interest-rates-december-2024",
    "fed-decision-in-march","fed-decision-in-may-2025","fed-decision-in-june",
    "fed-decision-in-july","fed-decision-in-september","fed-decision-in-october",
 ]

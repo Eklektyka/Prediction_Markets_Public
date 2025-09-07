@@ -1,11 +1,50 @@
 #!/usr/bin/python
 
+
+"""
+This file gives Kalshi's auto-downloaded tickers. Should be checked and used with caution:
+
+Input: series_ticker (str): The series ticker.
+
+
+"""
+
+import requests
+
+def autogenerate_kalshi_tickers(series_ticker):
+
+    base_url = "https://api.elections.kalshi.com/trade-api/v2/markets"
+    tickers = []
+    cursor = None
+
+    while True:
+        params = {
+            "series_ticker": series_ticker,
+            "limit": 100
+        }
+        if cursor:
+            params["cursor"] = cursor
+
+        resp = requests.get(base_url, params=params)
+        resp.raise_for_status()
+        data = resp.json()
+
+        tickers.extend([m["ticker"] for m in data.get("markets", [])])
+        cursor = data.get("cursor")
+
+        if not cursor:
+            break
+
+    return tickers
+
+
+
+
+
 """
 This file gives some sample sets of tickers that you might want to download.
 
 """
-
-
 def get_tickers(ticker_desc):
 
 
