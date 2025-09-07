@@ -54,7 +54,7 @@ library(collapse)
 
 setwd('/Users/jaredkatz/Documents/Research/PredictionMarketsPublic')
 
-#' Read and process trade-leve data from CSV file
+#' Read and process trade-level data from CSV file
 #'
 #' @param input_file Path to the CSV file to be read.
 #' @return A data frame with parsed datetime, extracted contract preamble, strike price, and sorted data.
@@ -313,12 +313,14 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon) {
     
     print(df %>% filter(swapped == TRUE))
     still_need_to_swap <- any(df$swapped)
+    df <- df %>% select(-swapped)
+    
   }
   
   # Remove the days where no trades cause 100 percent probabilities
-  df <- df %>% group_by(contract_preamble, date) %>%
-    filter(!any(probability == 98)) %>%
-    ungroup()
+  # df <- df %>% group_by(contract_preamble, date) %>%
+  #   filter(!any(probability == 98)) %>%
+  #   ungroup()
 
   # Make sure our probabilities add up to 100
   df <- df %>% group_by(contract_preamble, date) %>% arrange(strike) %>%
@@ -392,11 +394,11 @@ extract_distributions <- function(input_file, output_distributions, output_momen
 }
 
 
-extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
-                      output_distributions = 'data/daily_distribution_data/daily_distributions_fed_levels.csv',
-                      output_moments = 'data/daily_moments_data/daily_moments_fed_levels.csv',
-                      strike_int = 0.25,
-                      days_before_horizon = 180)
+# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
+#                       output_distributions = 'data/daily_distribution_data/daily_distributions_fed_levels.csv',
+#                       output_moments = 'data/daily_moments_data/daily_moments_fed_levels.csv',
+#                       strike_int = 0.25,
+#                       days_before_horizon = 180)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
                       output_distributions = 'data/daily_distribution_data/daily_distributions_headline_cpi_releases.csv',
@@ -404,15 +406,15 @@ extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headl
                       strike_int = 0.1,
                       days_before_horizon = 30)
 
-extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
-                      output_distributions = 'data/daily_distribution_data/daily_distributions_unemployment_releases.csv',
-                      output_moments = 'data/daily_moments_data/daily_moments_unemployment_releases.csv',
-                      strike_int = 0.1,
-                      days_before_horizon = 30)
+# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
+#                       output_distributions = 'data/daily_distribution_data/daily_distributions_unemployment_releases.csv',
+#                       output_moments = 'data/daily_moments_data/daily_moments_unemployment_releases.csv',
+#                       strike_int = 0.1,
+#                       days_before_horizon = 30)
 
-extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
-                      output_distributions = 'data/daily_distribution_data/daily_distributions_core_cpi_releases.csv',
-                      output_moments = 'data/daily_moments_data/daily_moments_core_cpi_releases.csv',
-                      strike_int = 0.1,
-                      days_before_horizon = 30)
+# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
+#                       output_distributions = 'data/daily_distribution_data/daily_distributions_core_cpi_releases.csv',
+#                       output_moments = 'data/daily_moments_data/daily_moments_core_cpi_releases.csv',
+#                       strike_int = 0.1,
+#                       days_before_horizon = 30)
 
