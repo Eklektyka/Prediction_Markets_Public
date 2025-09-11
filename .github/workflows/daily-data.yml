@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install pandas python-dotenv cryptography
+          pip install pandas python-dotenv cryptography requests
 
       - name: Run Python scraping script
         env:
