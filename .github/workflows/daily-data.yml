@@ -41,7 +41,14 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          Rscript -e 'install.packages(c("tidyverse","lubridate","av","matrixStats","gganimate"), repos="https://cloud.r-project.org")'
+          Rscript -e 'install.packages(c(
+            "tidyverse",
+            "lubridate",
+            "av",
+            "matrixStats",
+            "gganimate"
+          ), repos="https://cloud.r-project.org")'
+
 
       - name: Run R script (CDFs)
         run: Rscript code/convert_trades_to_pdfs/convert_trade_level_data_cdfs.R
