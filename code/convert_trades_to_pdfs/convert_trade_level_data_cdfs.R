@@ -169,58 +169,84 @@ fill_dataless_days <- function(df) {
   return(df)
 }
 
-#' Clean daily data by filtering and adjusting price bins
-#'
-#' Filters to 6 months before contract expiry, computes next higher strike bin,
-#' and enforces non-decreasing adjusted prices across strikes (per contract and date).
-#'
-#' @param df A data frame with columns: date, expiry_date, contract_preamble, strike, yes_price, daily_volume.
-#' @return A cleaned data frame with bin_high and adjusted_yes_price columns added.
-clean_data <- function(df, type='left-to-right') {
+clean_data <- function(df, type = "isotonic") {
+  # Expect columns: date, expiry_date, contract_preamble, strike, yes_price, daily_volume
+  # Assumes higher strike = less likely event -> yes_price should be non-increasing in strike.
   
-  # remove all observations further than 6 months before contract expiry
-  # df <- df %>% mutate(will_remove = (date >= expiry_date - months(6)))
-    # filter(
-    #   date >= expiry_date - months(6),
-    # ) %>%
-    # arrange(contract_preamble, strike, date)
+  df <- df %>%
+    arrange(contract_preamble, strike, date)
   
-
-    df <- df %>% arrange(contract_preamble, strike, date)
-  
-  # sometimes there are clear pricing errors in Kalshi contracts--
-  # a strike that is both cheaper and covers the occurence of another contract
-  # In this case, we assume that the strictly worse contract actually has an
-  # adjusted price equal to the contract that dominates it
-  # In other words, we impose monotonic increasing yes_prices
-  # from high (least likely to occur) to low (most likely to occur) strikes
-  if(type == 'right-to-left') {
+  if (type == "right-to-left") {
+    # Enforce non-decreasing when reading from high->low strike
+    # (equivalent to non-increasing across increasing strikes)
     df <- df %>%
       group_by(contract_preamble, date) %>%
       arrange(desc(strike), .by_group = TRUE) %>%
-      mutate(
-        adjusted_yes_price = cummax(yes_price), 
-      ) %>%
+      mutate(adjusted_yes_price = cummax(yes_price)) %>%
+      ungroup()
+    return(df)
+    
+  } else if (type == "left-to-right") {
+    # Push down anomalously high bins as you move to higher strikes
+    df <- df %>%
+      group_by(contract_preamble, date) %>%
+      arrange(strike, .by_group = TRUE) %>%  # increasing strike
+      mutate(adjusted_yes_price = {
+        # enforce non-increasing across increasing strikes
+        # cummin on the negative prices achieves non-increasing on the original
+        -cummax(-yes_price)
+      }) %>%
+      ungroup()
+    return(df)
+    
+  } else if (type == "isotonic") {
+    # Direction-agnostic, minimum-perturbation fix using isotonic regression
+    # Target: non-increasing yes_price as strike increases.
+    # Weights: daily_volume (small epsilon to avoid all-zero weights)
+    
+    use_isotone <- requireNamespace("Isotone", quietly = TRUE)
+    
+    # helper applied per (contract_preamble, date)
+    iso_group <- function(.x) {
+      gx <- .x %>% arrange(strike)  # strictly increasing order for fitting
+      y  <- gx$yes_price
+      w  <- gx$daily_volume
+      # handle NAs: only fit on finite y; leave NA rows as NA
+      keep <- is.finite(y)
+      if (sum(keep) <= 1) {
+        gx$adjusted_yes_price <- y
+        return(gx)
+      }
+      
+      if (use_isotone) {
+        wfit <- pmax(w[keep], 1e-8)  # avoid zero-weight pathologies
+        # gpava fits monotone sequence in the order of indices; set decreasing = TRUE
+        fit <- Isotone::gpava(z = seq_len(sum(keep)),
+                              y = y[keep],
+                              weights = wfit,
+                              decreasing = TRUE)
+        yhat <- y
+        yhat[keep] <- fit$x
+      } else {
+        # Fallback: isoreg fits non-decreasing. Fit to the NEGATED series,
+        # then negate back to enforce non-increasing.
+        fit <- stats::isoreg(seq_len(sum(keep)), -y[keep])
+        yhat <- y
+        yhat[keep] <- -as.numeric(fit$yf)
+      }
+      
+      gx$adjusted_yes_price <- yhat
+      gx
+    }
+    
+    df <- df %>%
+      group_by(contract_preamble, date) %>%
+      group_modify(~ iso_group(.x)) %>%
       ungroup()
     
     return(df)
-    
-  # in this specification, we set the price of the "dominating contract" equal to the one it dominates
-  } else if (type == 'left-to-right') {
-    df_dropping <- df %>%
-      group_by(contract_preamble, date) %>%
-      arrange(desc(-strike), .by_group = TRUE) %>%
-      mutate(
-        adjusted_yes_price = cummin(yes_price), 
-        
-      ) %>%
-      ungroup()
-    
   }
- 
-  
 }
-
 #' Convert adjusted prices to probability distributions
 #'
 #' Adds low-end bins to each contract/date slice, computes approximate probability
@@ -443,25 +469,25 @@ extract_distributions <- function(input_file, output_distributions, output_momen
 
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
-                      output_distributions = 'data/daily_distribution_data_left_to_right/daily_distributions_fed_levels.csv',
+                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_fed_levels.csv',
                       output_moments = 'data/daily_moments_data/daily_moments_fed_levels.csv',
                       strike_int = 0.25,
                       days_before_horizon = 180)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
-                      output_distributions = 'data/daily_distribution_data_left_to_right/daily_distributions_headline_cpi_releases.csv',
+                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_headline_cpi_releases.csv',
                       output_moments = 'data/daily_moments_data/daily_moments_headline_cpi_releases.csv',
                       strike_int = 0.1,
                       days_before_horizon = 30)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
-                      output_distributions = 'data/daily_distribution_data_left_to_right/daily_distributions_unemployment_releases.csv',
+                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_unemployment_releases.csv',
                       output_moments = 'data/daily_moments_data/daily_moments_unemployment_releases.csv',
                       strike_int = 0.1,
                       days_before_horizon = 30)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
-                      output_distributions = 'data/daily_distribution_data_left_to_right/daily_distributions_core_cpi_releases.csv',
+                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_core_cpi_releases.csv',
                       output_moments = 'data/daily_moments_data/daily_moments_core_cpi_releases.csv',
                       strike_int = 0.1,
                       days_before_horizon = 30)
