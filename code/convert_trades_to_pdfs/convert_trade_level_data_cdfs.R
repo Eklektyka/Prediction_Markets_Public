@@ -51,6 +51,8 @@ library(tidyverse)
 library(lubridate)
 library(matrixStats)
 library(collapse)
+library(isotone)
+library(CVXR)
 
 setwd('/Users/jaredkatz/Documents/Research/PredictionMarketsPublic')
 
@@ -169,82 +171,84 @@ fill_dataless_days <- function(df) {
   return(df)
 }
 
-clean_data <- function(df, type = "isotonic") {
-  # Expect columns: date, expiry_date, contract_preamble, strike, yes_price, daily_volume
-  # Assumes higher strike = less likely event -> yes_price should be non-increasing in strike.
+
+library(dplyr)
+library(purrr)
+
+# Helper-function to drop arbitrage
+adjust_middle_out <- function(df_grp, target = 0.49) {
+  # df_grp is one (contract_preamble, date) group, already arranged by strike
+  yes <- df_grp$yes_price
+  n   <- length(yes)
   
-  df <- df %>%
-    arrange(contract_preamble, strike, date)
+  # 1. find middle index: yes_price closest to target (0.49)
+  k <- which.min(abs(yes - target))
+  
+  adj <- yes
+  
+  # 2. enforce increasing prices as strike ↓ (left side)
+  if (k > 1) {
+    left_idx <- 1:(k - 1)
+    # go from middle to left: [yes[k], yes[k-1], ..., yes[1]]
+    seq_left <- c(yes[k], rev(yes[left_idx]))
+    # cumulative max so it never goes down as we move away from center
+    cm_left  <- cummax(seq_left)
+    # drop the middle element and flip back to match indices 1..k-1
+    adj[left_idx] <- rev(cm_left[-1])
+  }
+  
+  # 3. enforce decreasing prices as strike ↑ (right side)
+  if (k < n) {
+    right_idx <- (k + 1):n
+    # from middle to right: [yes[k], yes[k+1], ..., yes[n]]
+    seq_right <- c(yes[k], yes[right_idx])
+    # cumulative min so it never goes up as we move away from center
+    cm_right  <- cummin(seq_right)
+    # drop middle element; already in increasing strike order
+    adj[right_idx] <- cm_right[-1]
+  }
+  
+  df_grp$adjusted_yes_price <- adj
+  df_grp
+}
+
+
+# Needs: dplyr, isotone; optional: CVXR (for penalized_iso)
+# install.packages(c("isotone","CVXR"))  # if needed
+
+clean_data <- function(
+    df,
+    type = "middle-out"
+) {
+  
+  df <- df %>% dplyr::arrange(contract_preamble, strike, date)
   
   if (type == "right-to-left") {
-    # Enforce non-decreasing when reading from high->low strike
-    # (equivalent to non-increasing across increasing strikes)
-    df <- df %>%
-      group_by(contract_preamble, date) %>%
-      arrange(desc(strike), .by_group = TRUE) %>%
-      mutate(adjusted_yes_price = cummax(yes_price)) %>%
-      ungroup()
-    return(df)
+    return(
+      df %>%
+        dplyr::group_by(contract_preamble, date) %>%
+        dplyr::arrange(dplyr::desc(strike), .by_group = TRUE) %>%
+        dplyr::mutate(adjusted_yes_price = cummax(yes_price)) %>%
+        dplyr::ungroup()
+    )
     
   } else if (type == "left-to-right") {
-    # Push down anomalously high bins as you move to higher strikes
-    df <- df %>%
-      group_by(contract_preamble, date) %>%
-      arrange(strike, .by_group = TRUE) %>%  # increasing strike
-      mutate(adjusted_yes_price = {
-        # enforce non-increasing across increasing strikes
-        # cummin on the negative prices achieves non-increasing on the original
-        -cummax(-yes_price)
-      }) %>%
-      ungroup()
-    return(df)
+    return(
+      df %>%
+        dplyr::group_by(contract_preamble, date) %>%
+        dplyr::arrange(strike, .by_group = TRUE) %>%
+        dplyr::mutate(adjusted_yes_price = -cummax(-yes_price)) %>%
+        dplyr::ungroup()
+    )
+  } else if (type == "middle-out") {
     
-  } else if (type == "isotonic") {
-    # Direction-agnostic, minimum-perturbation fix using isotonic regression
-    # Target: non-increasing yes_price as strike increases.
-    # Weights: daily_volume (small epsilon to avoid all-zero weights)
-    
-    use_isotone <- requireNamespace("Isotone", quietly = TRUE)
-    
-    # helper applied per (contract_preamble, date)
-    iso_group <- function(.x) {
-      gx <- .x %>% arrange(strike)  # strictly increasing order for fitting
-      y  <- gx$yes_price
-      w  <- gx$daily_volume
-      # handle NAs: only fit on finite y; leave NA rows as NA
-      keep <- is.finite(y)
-      if (sum(keep) <= 1) {
-        gx$adjusted_yes_price <- y
-        return(gx)
-      }
-      
-      if (use_isotone) {
-        wfit <- pmax(w[keep], 1e-8)  # avoid zero-weight pathologies
-        # gpava fits monotone sequence in the order of indices; set decreasing = TRUE
-        fit <- Isotone::gpava(z = seq_len(sum(keep)),
-                              y = y[keep],
-                              weights = wfit,
-                              decreasing = TRUE)
-        yhat <- y
-        yhat[keep] <- fit$x
-      } else {
-        # Fallback: isoreg fits non-decreasing. Fit to the NEGATED series,
-        # then negate back to enforce non-increasing.
-        fit <- stats::isoreg(seq_len(sum(keep)), -y[keep])
-        yhat <- y
-        yhat[keep] <- -as.numeric(fit$yf)
-      }
-      
-      gx$adjusted_yes_price <- yhat
-      gx
-    }
-    
-    df <- df %>%
-      group_by(contract_preamble, date) %>%
-      group_modify(~ iso_group(.x)) %>%
-      ungroup()
-    
-    return(df)
+    return(
+      df %>%
+        group_by(contract_preamble, date) %>%
+        arrange(strike, .by_group = TRUE) %>%
+        group_modify(~ adjust_middle_out(.x, target = 0.49)) %>%
+        ungroup()
+    )
   }
 }
 #' Convert adjusted prices to probability distributions
@@ -469,25 +473,25 @@ extract_distributions <- function(input_file, output_distributions, output_momen
 
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
-                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_fed_levels.csv',
-                      output_moments = 'data/daily_moments_data/daily_moments_fed_levels.csv',
+                      output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_fed_levels.csv',
+                      output_moments = 'data/daily_moments_data_middle_out/daily_moments_fed_levels.csv',
                       strike_int = 0.25,
                       days_before_horizon = 180)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
-                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_headline_cpi_releases.csv',
-                      output_moments = 'data/daily_moments_data/daily_moments_headline_cpi_releases.csv',
+                      output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_headline_cpi_releases.csv',
+                      output_moments = 'data/daily_moments_data_middle_out/daily_moments_headline_cpi_releases.csv',
                       strike_int = 0.1,
                       days_before_horizon = 30)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
-                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_unemployment_releases.csv',
-                      output_moments = 'data/daily_moments_data/daily_moments_unemployment_releases.csv',
+                      output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_unemployment_releases.csv',
+                      output_moments = 'data/daily_moments_data_middle_out/daily_moments_unemployment_releases.csv',
                       strike_int = 0.1,
                       days_before_horizon = 30)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
-                      output_distributions = 'data/daily_distribution_data_isotonic/daily_distributions_core_cpi_releases.csv',
-                      output_moments = 'data/daily_moments_data/daily_moments_core_cpi_releases.csv',
+                      output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_core_cpi_releases.csv',
+                      output_moments = 'data/daily_moments_data_middle_out/daily_moments_core_cpi_releases.csv',
                       strike_int = 0.1,
                       days_before_horizon = 30)
