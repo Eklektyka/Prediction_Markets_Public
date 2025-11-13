@@ -176,35 +176,45 @@ library(dplyr)
 library(purrr)
 
 # Helper-function to drop arbitrage
+library(dplyr)
+library(purrr)
+
 adjust_middle_out <- function(df_grp, target = 0.49) {
   # df_grp is one (contract_preamble, date) group, already arranged by strike
   yes <- df_grp$yes_price
   n   <- length(yes)
   
-  # 1. find middle index: yes_price closest to target (0.49)
-  k <- which.min(abs(yes - target))
+  # --- 1. pick center index k based on triples ---
+  if (n >= 3) {
+    # triples: (1,2,3), (2,3,4), ..., (n-2, n-1, n)
+    triple_means <- (yes[1:(n-2)] + yes[2:(n-1)] + yes[3:n]) / 3
+    # center of triple (i-1, i, i+1) is i, i runs from 2..(n-1)
+    k <- which.min(abs(triple_means - target)) + 1
+  } else {
+    # fallback: just use point closest to target if fewer than 3 points
+    k <- which.min(abs(yes - target))
+  }
   
   adj <- yes
   
-  # 2. enforce increasing prices as strike ↓ (left side)
+  # --- 2. left side: lower strikes must have higher prices ---
   if (k > 1) {
     left_idx <- 1:(k - 1)
-    # go from middle to left: [yes[k], yes[k-1], ..., yes[1]]
+    # from center moving left in strike: [yes[k], yes[k-1], ..., yes[1]]
     seq_left <- c(yes[k], rev(yes[left_idx]))
-    # cumulative max so it never goes down as we move away from center
+    # enforce non-decreasing as we move away from center
     cm_left  <- cummax(seq_left)
-    # drop the middle element and flip back to match indices 1..k-1
+    # drop center and flip back
     adj[left_idx] <- rev(cm_left[-1])
   }
   
-  # 3. enforce decreasing prices as strike ↑ (right side)
+  # --- 3. right side: higher strikes must have lower prices ---
   if (k < n) {
     right_idx <- (k + 1):n
-    # from middle to right: [yes[k], yes[k+1], ..., yes[n]]
+    # from center moving right: [yes[k], yes[k+1], ..., yes[n]]
     seq_right <- c(yes[k], yes[right_idx])
-    # cumulative min so it never goes up as we move away from center
+    # enforce non-increasing as we move away from center
     cm_right  <- cummin(seq_right)
-    # drop middle element; already in increasing strike order
     adj[right_idx] <- cm_right[-1]
   }
   
