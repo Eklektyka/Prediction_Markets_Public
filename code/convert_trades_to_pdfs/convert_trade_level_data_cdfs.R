@@ -149,7 +149,7 @@ fill_dataless_days <- function(df) {
   return(df)
 }
 
-adjust_middle_out <- function(df_grp, target = 0.49) {
+adjust_middle_out <- function(df_grp, target = 49) {
   # df_grp is one (contract_preamble, date) group, already arranged by strike
   yes <- df_grp$yes_price
   n   <- length(yes)
@@ -226,7 +226,7 @@ clean_data <- function(
       df %>%
         group_by(contract_preamble, date) %>%
         arrange(strike, .by_group = TRUE) %>%
-        group_modify(~ adjust_middle_out(.x, target = 0.49)) %>%
+        group_modify(~ adjust_middle_out(.x, target = 49)) %>%
         ungroup()
     )
   }
