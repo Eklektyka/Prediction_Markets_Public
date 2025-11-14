@@ -493,11 +493,11 @@ extract_distributions <- function(input_file, output_distributions, output_momen
 
 
 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_fed_levels.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_fed_levels.csv',
-#                       strike_int = 0.25,
-#                       days_before_horizon = 180)
+extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
+                      output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_fed_levels.csv',
+                      output_moments = 'data/daily_moments_data_middle_out/daily_moments_fed_levels.csv',
+                      strike_int = 0.25,
+                      days_before_horizon = 180)
 
 extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_headline_cpi_releases.csv',
@@ -505,14 +505,14 @@ extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headl
                       strike_int = 0.1,
                       days_before_horizon = 30)
 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_unemployment_releases.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_unemployment_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
+extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
+                      output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_unemployment_releases.csv',
+                      output_moments = 'data/daily_moments_data_middle_out/daily_moments_unemployment_releases.csv',
+                      strike_int = 0.1,
+                      days_before_horizon = 30)
 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_core_cpi_releases.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_core_cpi_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
+extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
+                      output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_core_cpi_releases.csv',
+                      output_moments = 'data/daily_moments_data_middle_out/daily_moments_core_cpi_releases.csv',
+                      strike_int = 0.1,
+                      days_before_horizon = 30)
