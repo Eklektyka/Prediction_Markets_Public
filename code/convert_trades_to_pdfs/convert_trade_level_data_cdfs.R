@@ -145,6 +145,7 @@ fill_dataless_days <- function(df) {
     filter(
       date <= expiry_date
     )
+
   
   return(df)
 }
@@ -154,17 +155,10 @@ adjust_middle_out <- function(df_grp, target = 49) {
   yes <- df_grp$yes_price
   n   <- length(yes)
   
+
   # --- 1. pick center index k based on triples ---
-  if (n >= 5) {
-    # triples: (1,2,3), (2,3,4), ..., (n-2, n-1, n)
-    triple_means <- (yes[1:(n-2)] + yes[2:(n-1)] + yes[3:n]) / 3
-    # center of triple (i-1, i, i+1) is i, i runs from 2..(n-1)
-    k <- which.min(abs(triple_means - target)) + 1
-  } else {
-    # fallback: just use point closest to target if fewer than 3 points
-    k <- which.min(abs(yes - target))
-  }
-  
+  k <- which.min(abs(yes - target))
+
   adj <- yes
   
   # --- 2. left side: lower strikes must have higher prices ---
@@ -192,9 +186,6 @@ adjust_middle_out <- function(df_grp, target = 49) {
   df_grp
 }
 
-
-# Needs: dplyr, isotone; optional: CVXR (for penalized_iso)
-# install.packages(c("isotone","CVXR"))  # if needed
 
 clean_data <- function(
     df,
@@ -267,6 +258,35 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
                     ifelse(!is.na(lead(strike)), adjusted_yes_price - lead(adjusted_yes_price), adjusted_yes_price - 1)
              ))
   
+  # add in missing strikes
+  
+  df <- df %>% 
+    group_by(contract_preamble, date, expiry_date) %>% 
+    arrange(strike, .by_group = TRUE) %>% 
+    
+    # work on an integer step index to avoid floating-point problems
+    mutate(
+      k = round((strike - min(strike, na.rm = TRUE)) / strike_int)
+    ) %>% 
+    
+    distinct(k, .keep_all = TRUE) %>%  # remove any true duplicates first
+    
+    complete(
+      k = full_seq(k, 1),              # fill only gaps in the index
+      fill = list(
+        yes_price          = 0,
+        adjusted_yes_price = 0,
+        probability        = 0,
+        daily_volume       = 0
+      )
+    ) %>% 
+    
+    # rebuild strike from the integer index
+    mutate(
+      strike = min(strike, na.rm = TRUE) + k * strike_int
+    ) %>% 
+    select(-k) %>% 
+    ungroup()
   
   # Because of low trade volumes, sometimes Kalshi has two contracts that have
   # the exact same yes_price, despite one being for a lower strike than the
@@ -283,45 +303,72 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
     # are gaps in the probability distribution, we fill them by pushing
     # outer bins towards the median
     df_group <- df_group %>% arrange(strike) %>% mutate(swapped = FALSE)
-    print(df_group[1])
+    print(paste('now working on: ', head(df_group$contract_preamble, 1), head(df_group$date, 1)))
 
     nrows <- nrow(df_group) - 1
     
-    print(nrows)
-    # loop through all the strikes
-    if (nrows > 2) {
-      for (i in 2:nrows) {
-        
-        # push the low end of the distribution towards the right if there are gaps
-        # below the median
-        if (
-          df_group$adjusted_yes_price[i] > 49 &&
-          df_group$probability[i] < 1 &&
-          df_group$probability[i - 1] != 0
-        ) {
-          # Swap x[i] and x[i-1]
-          df_group$probability[i] <- df_group$probability[i - 1]
-          df_group$probability[i - 1] <- 0
-          df_group$swapped[i] <- TRUE
-  
-        }
-        
-        # push the high end of the distribution towards the left if there are gaps
-        # above the median
-        if (
-          df_group$adjusted_yes_price[i] < 49 &&
-          df_group$probability[i] < 1 &&
-          df_group$probability[i + 1] != 0
-        ) {
-          # Swap x[i] and x[i-1]
-          df_group$probability[i] <- df_group$probability[i + 1]
-          df_group$probability[i + 1] <- 0
-          df_group$swapped[i] <- TRUE
+    # fill backwards adjusted_yes_values so we properly swap bins towards median
+    df_group <- df_group %>%
+      mutate(
+        adjusted_yes_price = na_if(adjusted_yes_price, 0)
+      ) %>%
+      fill(adjusted_yes_price, .direction = "up") 
+    
+    j = 0
+    while(any(df_group$swapped) | j == 0) {
+
+      
+      df_group$swapped <- FALSE
+      
+      # to avoid cycles, we have to make sure everything goes to where the median is.
+      # Never swap the median location (location just after adjust_yes_price > 49) that we've determined.
+      protected_idx <- which(df_group$adjusted_yes_price > 49)
+      if(length(protected_idx) == 0) { # if there's no price above 49, just take the largest yesprice as med
+        protected_idx <- which.max(df$adjusted_yes_price)
+      }
+      else {protected_idx <- max(protected_idx)}
+      
+      # loop through all the strikes
+      if (nrows > 2) {
+        for (i in 1:nrows) {
+          
+          # push the low end of the distribution towards the right if there are gaps
+          if (
+            df_group$adjusted_yes_price[i] > 49 &&
+            df_group$probability[i] != 0 &&
+            df_group$probability[i + 1] == 0 &&
+            i != protected_idx            # don't use protected row as i
+          ) {
+
+            # Swap x[i] and x[i+1]
+            df_group$probability[i+1] <- df_group$probability[i]
+            df_group$probability[i] <- 0
+            df_group$swapped[i+1] <- TRUE
+
+          }
+          
+          # push the high end of the distribution towards the left if there are gaps
+          # above the median
+          
+          if (
+            df_group$adjusted_yes_price[i] < 49 &&
+            df_group$probability[i] == 0 &&
+            df_group$probability[i + 1] != 0 &&
+            i != protected_idx &&           # don't use protected row as i
+            (i + 1) != protected_idx 
+          ) {
+
+            # Swap x[i] and x[i-1]
+            df_group$probability[i] <- df_group$probability[i + 1]
+            df_group$probability[i + 1] <- 0
+            df_group$swapped[i] <- TRUE
+
+          }
         }
       }
-      
+      j = j + 1
+      print(j)
     }
-    
     
     return(df_group)
   }
@@ -329,19 +376,10 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
   # Apply our algorithm to the dataframe until we go through an iteration
   # where no bins are swapped
   if (type == 'swap') {
-    still_need_to_swap <- TRUE
-    while(still_need_to_swap) {
-      
       df <- df %>%
         group_by(contract_preamble, date) %>%
         group_split() %>%
         map_dfr(swap_probabilities)
-      
-      print(df %>% filter(swapped == TRUE))
-      still_need_to_swap <- any(df$swapped)
-      df <- df %>% select(-swapped)
-      
-    }
   }
 
   
