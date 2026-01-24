@@ -1,26 +1,28 @@
+# Not finished
+
 # merge with kalshi data
 merge_bid_ask_with_trade <- function() {
   
   # get kalshi from filepath
-  trade_level <- read_csv('data/daily_moments_data_middle_out/daily_moments_fed_levels.csv')
-  bid_ask_level <- read_csv('data/daily_bid_ask_moments_data/middle_out/daily_moments_fed_levels.csv')
+  trade_level <- read_csv('data/daily_moments_data/daily_moments_fed_levels.csv')
+  bid_ask_level <- read_csv('data/daily_bid_ask_moments_data/daily_moments_fed_levels.csv')
   
   colnames(trade_level) <- c("prediction_date", "contract_preamble", "horizon_date", "kalshi_mean_tl", "kalshi_median_tl", "kalshi_mode_tl", "kalshi_skew_tl", "kalshi_kurt_tl", "kalshi_variance_tl")
   colnames(bid_ask_level) <- c("prediction_date", "contract_preamble", "horizon_date", "kalshi_mean_ba", "kalshi_median_ba", "kalshi_mode_ba", "kalshi_skew_ba", "kalshi_kurt_ba", "kalshi_variance_ba")
   
   
   trade_level <- trade_level %>% mutate(
-    kalshi_mean_tl = kalshi_mean_tl + 0.125,
-    kalshi_median_tl = kalshi_median_tl + 0.125,
-    kalshi_mode_tl = kalshi_mode_tl + 0.125,
+    kalshi_mean_tl = kalshi_mean_tl,
+    kalshi_median_tl = kalshi_median_tl,
+    kalshi_mode_tl = kalshi_mode_tl,
     prediction_date = as.Date(prediction_date),
     horizon_date = as.Date(horizon_date)
   )
   
   bid_ask_level <- bid_ask_level %>% mutate(
-    kalshi_mean_ba = kalshi_mean_ba + 0.125,
-    kalshi_median_ba = kalshi_median_ba + 0.125,
-    kalshi_mode_ba = kalshi_mode_ba + 0.125,
+    kalshi_mean_ba = kalshi_mean_ba,
+    kalshi_median_ba = kalshi_median_ba,
+    kalshi_mode_ba = kalshi_mode_ba,
     prediction_date = as.Date(prediction_date),
     horizon_date = as.Date(horizon_date) - days(1)
   )
@@ -38,7 +40,7 @@ merge_bid_ask_with_trade <- function() {
   df <- full_join(kalshi_data, df)
   
   
-  df <- df %>% filter(horizon_date <= as.Date('2025-07-01') & horizon_date > as.Date('2022-01-01') & horizon_date != as.Date('2022-06-15'))
+  df <- df %>% filter(horizon_date <= as.Date('2026-01-01') & horizon_date > as.Date('2022-01-01') & horizon_date != as.Date('2022-06-15'))
   
   # Add column for "days before the decision"
   df <- df %>% mutate(days_before_decision = as.double(difftime(horizon_date , prediction_date , units = c("days"))),

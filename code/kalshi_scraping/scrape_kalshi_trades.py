@@ -41,7 +41,7 @@ This script is distributed under the MIT License (see LICENSE file).
 If you use this script or data collected with it in published work,
 please cite:
     
-Diercks, Katz (2025) 
+Diercks, Katz, Wright (2026) 
 
 with use.
 
@@ -71,7 +71,7 @@ from dotenv import load_dotenv
 from cryptography.hazmat.primitives import serialization
 
 # Set path according to your own computer directory
-# os.chdir('/Users/jaredkatz/Documents/Research/PredictionMarketsPublic')
+# os.chdir('/Users/jaredkatz/Documents/Research/PredictionMarketsReplication')
 # sys.path.append('code/kalshi_scraping')
 
 repo_root = os.getcwd()
@@ -85,38 +85,24 @@ from clients_kalshi import KalshiHttpClient, KalshiWebSocketClient, Environment
 ## Connecting to the Kalshi API ##
 ##################################
 
-# Load environment variables. You'll want to replace this with your own .env in this folder (see example.env)
-# load_dotenv('env.env')
+env = Environment.PROD
 
-env = Environment.PROD # toggle environment here
-load_dotenv("env.env")  # or just load_dotenv() if named .env
+# In GitHub Actions, don't load from .env file
+# Only load .env if it exists (for local development)
+if os.path.exists("env.env"):
+    load_dotenv("env.env")
 
 KEYID = os.getenv("KALSHI_KEYID")
-PRIVATE_KEY = os.getenv("KALSHI_PRIVATE_KEY")
+PRIVATE_KEY_STR = os.getenv("KALSHI_PRIVATE_KEY")  # Changed from KALSHI_KEYFILE
 
-if not PRIVATE_KEY:
-    raise ValueError("Missing Kalshi private key in environment variables")
+if not KEYID or not PRIVATE_KEY_STR:
+    raise ValueError("Missing Kalshi credentials in environment variables")
 
 # Convert the PEM string into a usable private key object
 private_key = serialization.load_pem_private_key(
-    PRIVATE_KEY.encode("utf-8"),
+    PRIVATE_KEY_STR.encode(),  # Convert string to bytes
     password=None,
 )
-# KEYID =  os.getenv('KALSHI_KEYID')
-# KEYFILE = os.getenv('KALSHI_KEYFILE')
-
-# Use your credentials to connect to the Kalshi API
-# try:
-#     with open(KEYFILE, "rb") as key_file:
-#         print(key_file)
-#         private_key = serialization.load_pem_private_key(
-#             key_file.read(),
-#             password=None  
-#         )
-# except FileNotFoundError:
-#     raise FileNotFoundError(f"Private key file not found at {KEYFILE}")
-# except Exception as e:
-#     raise Exception(f"Error loading private key: {str(e)}")
 
 # Initialize the HTTP client
 client = KalshiHttpClient(
@@ -124,6 +110,7 @@ client = KalshiHttpClient(
     private_key=private_key,
     environment=env
 )
+
 
 
 ##################################
@@ -148,7 +135,7 @@ look through to create ticker names...
 
 """
 
-import tickers # see some example tickers
+import tickers # download tickers given a tag of interest
 
 
 ##################################
@@ -165,13 +152,12 @@ Inputs:
         - output_filename: location the csv of all trade data is stored
         - tickers: the list of tickers you want the trade data for
 """
+
 def scrape_kalshi(output_filename, tickers):
 
     results = pd.DataFrame(columns=['trade_id', 'ticker', 'count', 
                                     'created_time', 'yes_price', 'no_price', 
                                     'taker_side'])
-    
-    
     for ticker in tickers:
         
         print(f"Fetching: {ticker}")
@@ -222,33 +208,21 @@ payrolls_tickers = tickers.autogenerate_kalshi_tickers('KXPAYROLLS')
 unemployment_tickers = tickers.autogenerate_kalshi_tickers('KXU3')
 cpi_tickers_mom = tickers.autogenerate_kalshi_tickers('KXCPI')
 
-# levels_tickers = tickers.get_tickers('fed_levels')
-# scrape_kalshi('data/trade_level_data/trade_level_data_fed_levels.csv', levels_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_fed_levels.csv', levels_tickers)
 
-# decisions_tickers = tickers.get_tickers('fed_decisions')
 # scrape_kalshi('data/trade_level_data/trade_level_data_fed_decisions.csv', decisions_tickers)
 
-# cpi_tickers = tickers.get_tickers('headline_cpi_releases')
-# scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_releases.csv', cpi_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_releases.csv', cpi_tickers)
 
-# cpi_end_of_year_tickers = tickers.get_tickers('headline_cpi_end_of_year')
-# scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_end_of_year.csv', cpi_end_of_year_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_end_of_year.csv', cpi_end_of_year_tickers)
 
-# core_cpi_tickers = tickers.get_tickers('core_cpi_releases')
-# scrape_kalshi('data/trade_level_data/trade_level_data_core_cpi_releases.csv', core_cpi_tickers)
-
-
-# gdp_end_of_year_tickers = tickers.get_tickers('gdp_end_of_yaear')
-# scrape_kalshi('data/trade_level_data/trade_level_data_gdp_end_of_year.csv', gdp_end_of_year_tickers)
-
-# payrolls_tickers = tickers.get_tickers('payrolls_releases')
-# scrape_kalshi('data/trade_level_data/trade_level_data_payrolls.csv', payrolls_tickers)
-
-# unemployment_tickers = tickers.get_tickers('unemployment_releases') # currently only have since Jan 2024, need to backfill
-# scrape_kalshi('data/trade_level_data/trade_level_data_unemployment.csv', unemployment_tickers)
-
-# recession_annual_tickers = tickers.get_tickers('recession_annual')
-# scrape_kalshi('data/trade_level_data/trade_level_data_recession_annual.csv', recession_annual_tickers)
-
+scrape_kalshi('data/trade_level_data/trade_level_data_core_cpi_releases.csv', core_cpi_tickers)
 
 scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_releases_mom.csv', cpi_tickers_mom)
+
+scrape_kalshi('data/trade_level_data/trade_level_data_gdp_end_of_year.csv', gdp_end_of_year_tickers)
+
+# scrape_kalshi('data/trade_level_data/trade_level_data_payrolls.csv', payrolls_tickers)
+
+scrape_kalshi('data/trade_level_data/trade_level_data_unemployment.csv', unemployment_tickers)
+
