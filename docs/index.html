@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,40 +11,40 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #f5f5f5;
         }
-        
+
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 40px 20px;
         }
-        
+
         header {
             background: white;
             padding: 40px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
-        
+
         h1 {
             color: #2c3e50;
             font-size: 2.2em;
             margin-bottom: 15px;
         }
-        
+
         .subtitle {
             color: #666;
             font-size: 1.1em;
             margin-bottom: 20px;
         }
-        
+
         .citation {
             background: #f8f9fa;
             padding: 15px;
@@ -51,30 +52,30 @@
             border-left: 4px solid #3498db;
             margin-top: 20px;
         }
-        
+
         .citation-label {
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 5px;
         }
-        
+
         .citation a {
             color: #3498db;
             text-decoration: none;
         }
-        
+
         .citation a:hover {
             text-decoration: underline;
         }
-        
+
         .section {
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
-        
+
         h2 {
             color: #2c3e50;
             font-size: 1.6em;
@@ -82,57 +83,57 @@
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
         }
-        
+
         .dataset {
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
-        
+
         .dataset:last-child {
             border-bottom: none;
         }
-        
+
         .dataset-title {
             font-size: 1.3em;
             color: #2c3e50;
             margin-bottom: 10px;
             font-weight: 600;
         }
-        
+
         .dataset-description {
             color: #666;
             margin-bottom: 15px;
         }
-        
+
         .file-list {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
         }
-        
+
         .file-item {
             padding: 8px 0;
             display: flex;
             align-items: center;
         }
-        
+
         .file-item a {
             color: #3498db;
             text-decoration: none;
             font-family: 'Courier New', monospace;
             font-size: 0.95em;
         }
-        
+
         .file-item a:hover {
             text-decoration: underline;
         }
-        
+
         .download-icon {
             margin-right: 8px;
             color: #3498db;
         }
-        
+
         .last-updated {
             background: #e8f4f8;
             padding: 15px;
@@ -141,189 +142,214 @@
             font-size: 0.95em;
             color: #2c3e50;
         }
-        
+
         .about p {
             margin-bottom: 15px;
             color: #555;
         }
-        
+
         footer {
             text-align: center;
             padding: 30px 20px;
             color: #666;
             font-size: 0.9em;
         }
-        
+
         .metadata {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
-        
+
         .metadata-item {
             background: #f8f9fa;
             padding: 12px;
             border-radius: 5px;
         }
-        
+
         .metadata-label {
             font-size: 0.85em;
             color: #666;
             margin-bottom: 3px;
         }
-        
+
         .metadata-value {
             font-weight: 600;
             color: #2c3e50;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>Kalshi-Implied Macroeconomic Expectations</h1>
             <p class="subtitle">Data supporting "Kalshi and The Rise of Macro Markets" (Diercks, Katz, Wright 2026)</p>
             <p style="color: #555; margin-top: 10px;">
-                Daily probability distributions and statistical moments on macroeconomic expectations of Fed Funds Rates and other macroeconomic variables derived from Kalshi prediction market data.
+                Daily probability distributions and statistical moments on macroeconomic expectations of Fed Funds Rates
+                and other macroeconomic variables derived from Kalshi prediction market data.
             </p>
-            
+
             <div class="citation">
                 <div class="citation-label">Please cite:</div>
-                <div>Diercks, A., Katz, J., & Wright, J. (2026). Kalshi and The Rise of Macro Markets. 
+                <div>Diercks, A., Katz, J., & Wright, J. (2026). Kalshi and The Rise of Macro Markets.
                     <a href="https://www.nber.org/papers/w34702" target="_blank">NBER Working Paper No. 34702</a>
                 </div>
             </div>
         </header>
-        
+
         <div class="section">
             <h2>Available Datasets</h2>
-            
+
             <div class="dataset">
                 <div class="dataset-title">📊 Probability Distributions</div>
                 <div class="dataset-description">
-                    Complete daily probability distributions for each macroeconomic variable in long-form data format. 
+                    Complete daily probability distributions for each macroeconomic variable in long-form data format.
                     Each row represents a probability mass at a specific outcome value for a given date.
                 </div>
                 <div class="file-list">
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_core_cpi_releases.csv" download>daily_distributions_core_cpi_releases.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_core_cpi_releases.csv"
+                            download>daily_distributions_core_cpi_releases.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_fed_levels.csv" download>daily_distributions_fed_levels.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_fed_levels.csv"
+                            download>daily_distributions_fed_levels.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_gdp_end_of_year.csv" download>daily_distributions_gdp_end_of_year.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_gdp_end_of_year.csv"
+                            download>daily_distributions_gdp_end_of_year.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_end_of_year.csv" download>daily_distributions_headline_cpi_end_of_year.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_end_of_year.csv"
+                            download>daily_distributions_headline_cpi_end_of_year.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases_mom.csv" download>daily_distributions_headline_cpi_releases_mom.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases_mom.csv"
+                            download>daily_distributions_headline_cpi_releases_mom.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases.csv" download>daily_distributions_headline_cpi_releases.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases.csv"
+                            download>daily_distributions_headline_cpi_releases.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_unemployment_releases.csv" download>daily_distributions_unemployment_releases.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_unemployment_releases.csv"
+                            download>daily_distributions_unemployment_releases.csv</a>
                     </div>
                 </div>
             </div>
-            
+
             <div class="dataset">
                 <div class="dataset-title">📈 Statistical Moments</div>
                 <div class="dataset-description">
-                    Daily summary statistics (mean, variance, skewness, kurtosis, etc.) computed from the probability distributions. 
+                    Daily summary statistics (mean, variance, skewness, kurtosis, etc.) computed from the probability
+                    distributions.
                     Each row represents one date with multiple statistical measures.
                 </div>
                 <div class="file-list">
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_core_cpi_releases.csv" download>daily_moments_core_cpi_releases.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_core_cpi_releases.csv"
+                            download>daily_moments_core_cpi_releases.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_fed_levels.csv" download>daily_moments_fed_levels.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_fed_levels.csv"
+                            download>daily_moments_fed_levels.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_gdp_end_of_year.csv" download>daily_moments_gdp_end_of_year.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_gdp_end_of_year.csv"
+                            download>daily_moments_gdp_end_of_year.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_end_of_year.csv" download>daily_moments_headline_cpi_end_of_year.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_end_of_year.csv"
+                            download>daily_moments_headline_cpi_end_of_year.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases_mom.csv" download>daily_moments_headline_cpi_releases_mom.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases_mom.csv"
+                            download>daily_moments_headline_cpi_releases_mom.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases.csv" download>daily_moments_headline_cpi_releases.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases.csv"
+                            download>daily_moments_headline_cpi_releases.csv</a>
                     </div>
                     <div class="file-item">
                         <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_unemployment_releases.csv" download>daily_moments_unemployment_releases.csv</a>
+                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_unemployment_releases.csv"
+                            download>daily_moments_unemployment_releases.csv</a>
                     </div>
                 </div>
             </div>
-            
+
             <div class="last-updated" id="lastUpdated">
                 Loading update information...
             </div>
         </div>
-        
+
         <div class="section about">
             <h2>About This Data</h2>
             <p>
-                This dataset contains processed data from Kalshi prediction markets, providing daily estimates of market-implied 
-                probability distributions for key macroeconomic variables including Federal Funds Rates, CPI (both headline and core), 
+                This dataset contains processed data from Kalshi prediction markets, providing daily estimates of
+                market-implied
+                probability distributions for key macroeconomic variables including Federal Funds Rates, CPI (both
+                headline and core),
                 GDP growth, and unemployment rates.
             </p>
             <p>
-                The data is derived from trade-level and orderbook-level observations from Kalshi's prediction markets and is updated daily 
-                through an automated pipeline. Researchers can use this data to study how market expectations evolve over time and how 
+                The data is derived from trade-level and orderbook-level observations from Kalshi's prediction markets
+                and is updated daily
+                through an automated pipeline. Researchers can use this data to study how market expectations evolve
+                over time and how
                 they respond to economic news and policy announcements.
             </p>
             <p>
-                <strong>Data Format:</strong> All files are provided as CSV (comma-separated values) files with headers. 
-                The distribution files use long-form format where each row represents a probability mass at a specific outcome. 
+                <strong>Data Format:</strong> All files are provided as CSV (comma-separated values) files with headers.
+                The distribution files use long-form format where each row represents a probability mass at a specific
+                outcome.
                 The moments files contain summary statistics with one row per date.
             </p>
             <p>
-                <strong>Update Frequency:</strong> This dataset is updated daily at approximately 5:00 AM UTC.
+                <strong>Update Frequency:</strong> This dataset is updated daily at approximately
+                5:30 PM EST each Friday, containing data through the week.
             </p>
         </div>
-        
+
         <footer>
             <p>Data collected and processed by Anthony Diercks, Jared Katz, and Jonathan Wright</p>
             <p style="margin-top: 10px; font-size: 0.85em;">
-                Questions or issues? Please reference the <a href="https://www.nber.org/papers/w34702" target="_blank" style="color: #3498db;">working paper</a> for methodology details.
+                Questions or issues? Please reference the <a href="https://www.nber.org/papers/w34702" target="_blank"
+                    style="color: #3498db;">working paper</a> for methodology details.
             </p>
         </footer>
     </div>
-    
+
     <script>
         async function loadLastUpdated() {
             try {
                 const response = await fetch('https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/last_updated.txt');
                 const text = await response.text();
-                document.getElementById('lastUpdated').innerHTML = 
+                document.getElementById('lastUpdated').innerHTML =
                     `<strong>Last Updated:</strong> ${text.trim()}`;
             } catch (error) {
-                document.getElementById('lastUpdated').innerHTML = 
+                document.getElementById('lastUpdated').innerHTML =
                     '<strong>Last Updated:</strong> Information unavailable';
             }
         }
-        
+
         loadLastUpdated();
     </script>
 </body>
+
 </html>
