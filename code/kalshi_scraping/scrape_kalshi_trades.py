@@ -208,21 +208,21 @@ payrolls_tickers = tickers.autogenerate_kalshi_tickers('KXPAYROLLS')
 unemployment_tickers = tickers.autogenerate_kalshi_tickers('KXU3')
 cpi_tickers_mom = tickers.autogenerate_kalshi_tickers('KXCPI')
 
-# scrape_kalshi('data/trade_level_data/trade_level_data_fed_levels.csv', levels_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_fed_levels.csv', levels_tickers)
 
 # scrape_kalshi('data/trade_level_data/trade_level_data_fed_decisions.csv', decisions_tickers)
 
-# scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_releases.csv', cpi_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_releases.csv', cpi_tickers)
 
-# scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_end_of_year.csv', cpi_end_of_year_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_end_of_year.csv', cpi_end_of_year_tickers)
 
-# scrape_kalshi('data/trade_level_data/trade_level_data_core_cpi_releases.csv', core_cpi_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_core_cpi_releases.csv', core_cpi_tickers)
 
-# scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_releases_mom.csv', cpi_tickers_mom)
+scrape_kalshi('data/trade_level_data/trade_level_data_headline_cpi_releases_mom.csv', cpi_tickers_mom)
 
-# scrape_kalshi('data/trade_level_data/trade_level_data_gdp_end_of_year.csv', gdp_end_of_year_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_gdp_end_of_year.csv', gdp_end_of_year_tickers)
 
 # scrape_kalshi('data/trade_level_data/trade_level_data_payrolls.csv', payrolls_tickers)
 
-# scrape_kalshi('data/trade_level_data/trade_level_data_unemployment.csv', unemployment_tickers)
+scrape_kalshi('data/trade_level_data/trade_level_data_unemployment.csv', unemployment_tickers)
 
