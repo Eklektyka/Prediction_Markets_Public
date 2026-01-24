@@ -85,40 +85,24 @@ from clients_kalshi import KalshiHttpClient, KalshiWebSocketClient, Environment
 ## Connecting to the Kalshi API ##
 ##################################
 
-# Load environment variables. You'll want to replace this with your own .env in this folder (see example.env)
-# load_dotenv('env.env')
+env = Environment.PROD
 
-env = Environment.PROD # toggle environment here
-load_dotenv("env.env")  # or just load_dotenv() if named .env
+# In GitHub Actions, don't load from .env file
+# Only load .env if it exists (for local development)
+if os.path.exists("env.env"):
+    load_dotenv("env.env")
 
 KEYID = os.getenv("KALSHI_KEYID")
-PRIVATE_KEY = os.getenv("KALSHI_KEYFILE")
+PRIVATE_KEY_STR = os.getenv("KALSHI_PRIVATE_KEY")  # Changed from KALSHI_KEYFILE
 
-if not PRIVATE_KEY:
-    raise ValueError("Missing Kalshi private key in environment variables")
+if not KEYID or not PRIVATE_KEY_STR:
+    raise ValueError("Missing Kalshi credentials in environment variables")
 
 # Convert the PEM string into a usable private key object
-with open("key.txt", "rb") as f:
-    private_key = serialization.load_pem_private_key(
-        f.read(),
-        password=None,
-    )
-
-# KEYID =  os.getenv('KALSHI_KEYID')
-# KEYFILE = os.getenv('KALSHI_KEYFILE')
-
-# Use your credentials to connect to the Kalshi API
-# try:
-#     with open(KEYFILE, "rb") as key_file:
-#         print(key_file)
-#         private_key = serialization.load_pem_private_key(
-#             key_file.read(),
-#             password=None  
-#         )
-# except FileNotFoundError:
-#     raise FileNotFoundError(f"Private key file not found at {KEYFILE}")
-# except Exception as e:
-#     raise Exception(f"Error loading private key: {str(e)}")
+private_key = serialization.load_pem_private_key(
+    PRIVATE_KEY_STR.encode(),  # Convert string to bytes
+    password=None,
+)
 
 # Initialize the HTTP client
 client = KalshiHttpClient(
@@ -126,6 +110,7 @@ client = KalshiHttpClient(
     private_key=private_key,
     environment=env
 )
+
 
 
 ##################################
