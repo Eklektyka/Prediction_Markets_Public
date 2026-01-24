@@ -18,10 +18,11 @@ library(timeDate)
 library(writexl)
 
 
-setwd("~/Documents/Research/PredictionMarketsPublic/")
+setwd("~/Documents/Research/PredictionMarketsReplication/")
 
+source("code/utilities.R")
 setPar()
-source("~/Documents/Research/Utilities/utilities.R")
+
 
 pdf(file="output/comparison_charts.pdf", width=8.5, height=11)
 

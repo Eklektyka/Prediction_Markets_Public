@@ -1,4 +1,4 @@
-setwd('~/Documents/Research/PredictionMarketsPublic/')
+setwd('~/Documents/Research/PredictionMarketsReplication/')
 
 source('~/Documents/Research/Utilities/utilities.R')
 library(tidyverse)
@@ -259,6 +259,25 @@ load_data <- function(input='statement_shock', output='ffr', include_next_meetin
     
     df_kalshi <- df_kalshi %>% rename('prediction_date' = 'date', 'horizon_date' = 'expiry_date')
   
+  } else if (output=='cpi_mom') {
+    df_kalshi <- read_csv('data/daily_moments_data_middle_out/daily_moments_headline_cpi_releases_mom.csv')
+    df_kalshi <- df_kalshi %>%
+      arrange(contract_preamble, date) %>%
+      group_by(contract_preamble) %>%
+      mutate(
+        skewness2 = (mean - mode)/variance^(1/2),
+        kalshi_mean_c = mean - lag(mean),
+        kalshi_median_c = median - lag(median),
+        kalshi_mode_c = mode - lag(mode),
+        kalshi_variance_c = variance - lag(variance),
+        kalshi_skew_c = skewness - lag(skewness),
+        kalshi_skew2_c = skewness2 - lag(skewness2),
+        kalshi_kurt_c = kurtosis - lag(kurtosis)
+      ) %>%
+      ungroup()
+    
+    df_kalshi <- df_kalshi %>% rename('prediction_date' = 'date', 'horizon_date' = 'expiry_date')
+    
   } else if (output=='core_cpi') {
     df_kalshi <- read_csv('data/daily_moments_data_middle_out/daily_moments_core_cpi_releases.csv')
     df_kalshi <- df_kalshi %>%
@@ -316,7 +335,7 @@ load_data <- function(input='statement_shock', output='ffr', include_next_meetin
   # full_join(df, df_old)
   
   # Get "long-run" kalshi forecasts (1 months away)
-  if(output=='ffr' | output=='cpi' | output=='cpi_swanson' & include_next_meeting == FALSE) {
+  if(output=='ffr' | output=='cpi' | output=='cpi_mom' & include_next_meeting == FALSE) {
      df <- df %>% filter(horizon_date >= prediction_date %m+% months(1))
   }
   
@@ -409,7 +428,7 @@ run_exhibit <- function() {
                    'event_ed1', 'event_residual'
                    )
   
-  output_types <- c('ffr', 'unemployment', 'cpi', 'core_cpi')
+  output_types <- c('ffr', 'unemployment', 'cpi', 'core_cpi', 'cpi_mom')
   
   include_next_meeting_types <- c(TRUE, FALSE)
   

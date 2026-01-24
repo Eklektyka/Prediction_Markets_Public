@@ -1,3 +1,68 @@
+##################################
+##   Kalshi Bid–Ask Processor   ##
+##################################
+# Author: Jared Dean Katz, Anthony M. Diercks
+# Description:
+#  Converts Kalshi daily bid–ask candlestick data (from Python scraper)
+#  into daily PDFs and computes distributional moments.
+
+library(tidyverse)
+library(lubridate)
+library(matrixStats)
+library(DescTools)
+library(collapse)
+
+
+# ------------------------
+# Read and preprocess data
+# ------------------------
+read_bid_ask <- function(input_file, filter_large_spreads = T) {
+  
+  df <- read_csv(input_file)
+  
+  df <- df %>%
+    mutate(
+      date = as.Date(end_period_utc),
+      # Extract event prefix and strike from market_ticker
+      contract_preamble = str_extract(market_ticker, ".*(?=-T[^-]+$)"),
+      strike_raw = str_extract(market_ticker, "(?<=-T)[^\\-]+$"),
+      strike = as.numeric(str_replace_all(strike_raw, "−", "-")),
+      # Midpoint between yes_bid and yes_ask close prices
+      yes_price = (yes_bid_close + yes_ask_close) / 2
+    )
+  
+  # If the flag is turned on, remove anything with a bid-ask spread of more than 15
+  if(filter_large_spreads == TRUE) {
+    
+    df <- df %>% mutate(large_spread = abs(yes_bid_close - yes_ask_close) > 10)
+
+    df <- df %>%
+      arrange(series, event_ticker, market_ticker, end_period_utc) %>%
+      group_by(series, event_ticker, market_ticker) %>%
+      # keep only values from rows where large_spread == FALSE, NA otherwise
+      mutate(
+        last_good_bid = if_else(!large_spread, yes_bid_close, NA_real_),
+        last_good_ask = if_else(!large_spread, yes_ask_close, NA_real_)
+      ) %>%
+      # carry the last good values forward within each group
+      fill(last_good_bid, last_good_ask, .direction = "down") %>%
+      # replace only where large_spread == TRUE (leave others untouched)
+      mutate(
+        yes_bid_close = if_else(large_spread & !is.na(last_good_bid), last_good_bid, yes_bid_close),
+        yes_ask_close = if_else(large_spread & !is.na(last_good_ask), last_good_ask, yes_ask_close)
+      ) %>%
+      # drop helper columns and ungroup
+      select(-last_good_bid, -last_good_ask) %>%
+      ungroup()
+    
+  }
+  
+    df <- df %>% select(date, contract_preamble, strike, yes_price, volume, open_interest) %>%
+    arrange(contract_preamble, strike, date)
+  
+  return(df)
+}
+
 # 
 # convert_trade_level_data_cdfs.R
 # 
@@ -52,6 +117,7 @@ library(lubridate)
 library(matrixStats)
 library(collapse)
 
+# setwd('/Users/jaredkatz/Documents/Research/PredictionMarketsPublic')
 
 #' Read and process trade-level data from CSV file
 #'
@@ -80,44 +146,13 @@ read_data <- function(input_file) {
 }
 
 
-#' Convert trade-level Kalshi data to daily summary
-#'
-#' Takes the last trade of each day as the daily value, and aggregates volume.
-#'
-#' @param df A data frame containing trade-level options data with columns: date, contract_preamble, strike, yes_price, count (volume)
-#' @return A data frame with daily last prices and total volume per contract and strike.
-convert_to_daily <- function(df, method = 'last') {
-  
-  if (method == 'last') {
-    df %>%
-      group_by(date, contract_preamble, strike) %>%
-      arrange(created_time, .by_group = TRUE) %>%
-      summarise(
-        yes_price    = dplyr::last(yes_price),
-        daily_volume = sum(count),
-        .groups = "drop"
-      ) %>%
-      arrange(contract_preamble, strike, date)
-  } else if (method == 'average') {
-    df %>%
-      group_by(date, contract_preamble, strike) %>%
-      arrange(created_time, .by_group = TRUE) %>%
-      summarise(
-        yes_price    = weighted.mean(yes_price, count),
-        daily_volume = sum(count),
-        .groups = "drop"
-      ) %>%
-      arrange(contract_preamble, strike, date)
-  }
-}
-
 #' Fill missing days in daily data with last known price (from a previous day)
 #'
 #' Ensures each valid contract_preamble and strike pair has data for every date in the full range.
 #' Fills forward the last known price, sets daily volume to 0 on filled days,
 #' and trims data outside the active contract period.
 #'
-#' @param df A data frame with columns: date, contract_preamble, strike, yes_price, daily_volume.
+#' @param df A data frame with columns: date, contract_preamble, strike, yes_price.
 #' @return A data frame with missing dates filled and cleaned.
 fill_dataless_days <- function(df, days_before_horizon) {
   
@@ -153,7 +188,7 @@ fill_dataless_days <- function(df, days_before_horizon) {
     group_by(contract_preamble, strike) %>%
     fill(yes_price, .direction = "down") %>%
     ungroup() %>% mutate(
-      daily_volume = ifelse(is.na(daily_volume), 0, daily_volume)
+      volume = ifelse(is.na(volume), 0, volume)
     )
   
   # remove the rows at the start with no price, rows after the expiry date, and
@@ -162,32 +197,20 @@ fill_dataless_days <- function(df, days_before_horizon) {
     filter(
       date <= expiry_date
     )
-
+  
   
   return(df)
 }
 
-#' Middle out algorithm is our preferred method of removing arbitrage violations in Kalshi prices,
-#' which can be particularly helpful when there's low or infrequent trades in markets
-#'
-#' Idea: Choose an event [x, infinity) bin in the distribution which we argue has good liquidity (and thus should
-#' have relatively accurate prices). Then, ensure that events that encompass it [x_{i-1}, infinity)
-#' are priced higher, and events that are encompassed by it [x_{i+1}, infinity) are priced lower.
-#' Repeat this process, creating a distribution that is connected and monotonically increasing.
-#'
-#' @param target Price level which we target as the center bin (note Kalshi prices 1-99, so the
-#' median is 49, not 50)
-#' @param df_grp Contract/day level df which we perform the operation on
-#' @return A data frame with missing dates filled and cleaned.
 adjust_middle_out <- function(df_grp, target = 49) {
   # df_grp is one (contract_preamble, date) group, already arranged by strike
   yes <- df_grp$yes_price
   n   <- length(yes)
   
-
+  
   # --- 1. pick center index k based on triples ---
   k <- which.min(abs(yes - target))
-
+  
   adj <- yes
   
   # --- 2. left side: lower strikes must have higher prices ---
@@ -215,13 +238,7 @@ adjust_middle_out <- function(df_grp, target = 49) {
   df_grp
 }
 
-#' Clean the data to impose no arbitrage restrictions and push our Kalshi prices into a monotonic
-#' and connected CDF. Several potential options to impose this.
-#'
-#' @param df Dataframe of prices ready to be converted into a CDF
-#' @param type Method to impose monotonic increasing/no arbitrage assumptions. By default middle-out
-#' (defined above). Can also impose right-to-left (ensuring prices decrease from the right-tail
-#' bins) or left-to-right (ensuring prices increase from the left-tail bins)
+
 clean_data <- function(
     df,
     type = "middle-out"
@@ -257,7 +274,6 @@ clean_data <- function(
     )
   }
 }
-
 #' Convert adjusted prices to probability distributions
 #'
 #' Adds low-end bins to each contract/date slice, computes approximate probability
@@ -322,7 +338,7 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
     ) %>% 
     select(-k) %>% 
     ungroup()
-
+  
   
   
   # Because of low trade volumes, sometimes Kalshi has two contracts that have
@@ -341,7 +357,7 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
     # outer bins towards the median
     df_group <- df_group %>% arrange(strike) %>% mutate(swapped = FALSE)
     print(paste('now working on: ', head(df_group$contract_preamble, 1), head(df_group$date, 1)))
-
+    
     nrows <- nrow(df_group) - 1
     
     # fill backwards adjusted_yes_values so we properly swap bins towards median
@@ -355,7 +371,7 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
     
     j = 0
     while(any(df_group$swapped) | j == 0) {
-
+      
       
       df_group$swapped <- FALSE
       
@@ -378,12 +394,12 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
             df_group$probability[i + 1] == 0 &&
             i != protected_idx            # don't use protected row as i
           ) {
-
+            
             # Swap x[i] and x[i+1]
             df_group$probability[i+1] <- df_group$probability[i]
             df_group$probability[i] <- 0
             df_group$swapped[i+1] <- TRUE
-
+            
           }
           
           # push the high end of the distribution towards the left if there are gaps
@@ -396,12 +412,12 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
             i != protected_idx &&           # don't use protected row as i
             (i + 1) != protected_idx 
           ) {
-
+            
             # Swap x[i] and x[i-1]
             df_group$probability[i] <- df_group$probability[i + 1]
             df_group$probability[i + 1] <- 0
             df_group$swapped[i] <- TRUE
-
+            
           }
         }
       }
@@ -415,14 +431,14 @@ convert_to_probabilities <- function(df, strike_int, days_before_horizon, type =
   # Apply our algorithm to the dataframe until we go through an iteration
   # where no bins are swapped
   if (type == 'swap') {
-      df <- df %>%
-        group_by(contract_preamble, date) %>%
-        group_split() %>%
-        map_dfr(swap_probabilities)
+    df <- df %>%
+      group_by(contract_preamble, date) %>%
+      group_split() %>%
+      map_dfr(swap_probabilities)
   }
-
   
-
+  
+  
   # Make sure our probabilities add up to 100
   df <- df %>% group_by(contract_preamble, date) %>% arrange(strike) %>%
     mutate(sum = sum(probability),
@@ -480,85 +496,26 @@ get_moments <- function(df, moment_adjustment) {
 #' @param input_file Path to the input CSV file with raw trade-level data.
 #' @param output_distributions Path to output CSV file for the processed probability distributions.
 #' @param output_moments Path to output CSV file for the computed moments
-#' @param days_before_horizon A value for removing data too far away from the horizon from the
-#' dataset
+#' @param days_before_horizon A value for removing data too far away from the horizon from the dataset
 #' @param moment_adjustment By default 0, an adjustment to central moments so that strikes get
 #' correctly interpreted as the corresponding events where they would pay off
 #' @return No return value. Writes processed data to specified output files.
 extract_distributions <- function(input_file, output_distributions, output_moments, strike_int,
-                                  days_before_horizon, moment_adjustment=0) {
+                                  days_before_horizon, end_date = as.Date('2025-10-01'),
+                                  moment_adjustment=0) {
   
-  df <- read_data(input_file = input_file)
-  df <- convert_to_daily(df, method = 'last')
+  df <- read_bid_ask(input_file = input_file)
   df <- fill_dataless_days(df, days_before_horizon)
   df <- clean_data(df)
   
+  df <- df %>% filter(expiry_date < end_date)
+  
   df <- convert_to_probabilities(df, strike_int = strike_int, days_before_horizon)
   moments_df <- get_moments(df, moment_adjustment)
-
+  
   write_csv(moments_df, output_moments)
+  
   write_csv(df, output_distributions)
 }
 
 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
-#                       output_distributions = 'data/daily_distribution_data/daily_distributions_fed_levels.csv',
-#                       output_moments = 'data/daily_moments_data/daily_moments_fed_levels.csv',
-#                       strike_int = 0.25,
-#                       days_before_horizon = 180)
-# 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
-#                       output_distributions = 'data/daily_distribution_data/daily_distributions_headline_cpi_releases.csv',
-#                       output_moments = 'data/daily_moments_data/daily_moments_headline_cpi_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
-# 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
-#                       output_distributions = 'data/daily_distribution_data/daily_distributions_unemployment_releases.csv',
-#                       output_moments = 'data/daily_moments_data/daily_moments_unemployment_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
-# 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
-#                       output_distributions = 'data/daily_distribution_data/daily_distributions_core_cpi_releases.csv',
-#                       output_moments = 'data/daily_moments_data/daily_moments_core_cpi_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
-
-
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_fed_levels.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_fed_levels.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_fed_levels.csv',
-#                       strike_int = 0.25,
-#                       days_before_horizon = 180)
-# 
-# 
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_headline_cpi_releases.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_headline_cpi_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)
-
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_headline_cpi_releases_regressions.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_headline_cpi_releases_regressions.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 90)
-
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_unemployment.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_unemployment_releases.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_unemployment_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 60)
-
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_headline_cpi_releases_mom.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_headline_cpi_releases_mom.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_headline_cpi_releases_mom.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 60)
-
-# extract_distributions(input_file = 'data/trade_level_data/trade_level_data_core_cpi_releases.csv',
-#                       output_distributions = 'data/daily_distribution_data_middle_out/daily_distributions_core_cpi_releases.csv',
-#                       output_moments = 'data/daily_moments_data_middle_out/daily_moments_core_cpi_releases.csv',
-#                       strike_int = 0.1,
-#                       days_before_horizon = 30)

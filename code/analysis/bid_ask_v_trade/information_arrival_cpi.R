@@ -1,11 +1,9 @@
-# Not finished
-
 # merge with kalshi data
 merge_bid_ask_with_trade <- function() {
   
   # get kalshi from filepath
-  trade_level <- read_csv('data/daily_moments_data/daily_moments_fed_levels.csv')
-  bid_ask_level <- read_csv('data/daily_bid_ask_moments_data/daily_moments_fed_levels.csv')
+  trade_level <- read_csv('data/daily_moments_data/daily_moments_headline_cpi_releases.csv')
+  bid_ask_level <- read_csv('data/daily_bid_ask_moments_data/daily_moments_headline_cpi_releases.csv')
   
   colnames(trade_level) <- c("prediction_date", "contract_preamble", "horizon_date", "kalshi_mean_tl", "kalshi_median_tl", "kalshi_mode_tl", "kalshi_skew_tl", "kalshi_kurt_tl", "kalshi_variance_tl")
   colnames(bid_ask_level) <- c("prediction_date", "contract_preamble", "horizon_date", "kalshi_mean_ba", "kalshi_median_ba", "kalshi_mode_ba", "kalshi_skew_ba", "kalshi_kurt_ba", "kalshi_variance_ba")
@@ -40,7 +38,7 @@ merge_bid_ask_with_trade <- function() {
   df <- full_join(kalshi_data, df)
   
   
-  df <- df %>% filter(horizon_date <= as.Date('2026-01-01') & horizon_date > as.Date('2022-01-01') & horizon_date != as.Date('2022-06-15'))
+  df <- df %>% filter(horizon_date <= as.Date('2025-07-01') & horizon_date > as.Date('2022-01-01') & horizon_date != as.Date('2022-06-15'))
   
   # Add column for "days before the decision"
   df <- df %>% mutate(days_before_decision = as.double(difftime(horizon_date , prediction_date , units = c("days"))),
@@ -72,7 +70,7 @@ construct_average_errors <- function(df) {
               average_abs_mean_error_ba = mean(kalshi_abs_mean_error_ba, na.rm = T),
               average_abs_median_error_ba = mean(kalshi_abs_median_error_ba, na.rm = T),
               average_abs_mode_error_ba = mean(kalshi_abs_mode_error_ba, na.rm = T)
-              )
+    )
   
   return(df)
   
@@ -81,7 +79,7 @@ construct_average_errors <- function(df) {
 # Driver function to do all the work before charting
 load_data <- function() {
   
-
+  
   df <- merge_bid_ask_with_trade()
   avg_errors <- construct_average_errors(df)
   
