@@ -10,6 +10,7 @@ Input: series_ticker (str): The series ticker.
 """
 
 import requests
+import time
 
 def autogenerate_kalshi_tickers(series_ticker):
 
@@ -26,6 +27,10 @@ def autogenerate_kalshi_tickers(series_ticker):
             params["cursor"] = cursor
 
         resp = requests.get(base_url, params=params)
+
+        # Add a delay to avoid rate limiting
+        time.sleep(1)  # Wait 1 second between requests
+
         resp.raise_for_status()
         data = resp.json()
 
