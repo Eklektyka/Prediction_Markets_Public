@@ -52,7 +52,6 @@ library(tidyverse)
 library(lubridate)
 library(av)
 library(matrixStats)
-library(gganimate)
 
 
 #' Convert trade-level Kalshi data to daily summary
