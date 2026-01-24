@@ -56,13 +56,22 @@ jobs:
       - name: Run R script (PDFs)
         run: Rscript code/convert_trades_to_pdfs/convert_trade_level_data_pdfs.R
 
+
       # -----------------------
-      # Commit results
+      # Upload to AWS S3
       # -----------------------
-      - name: Commit updated files
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Sync data to S3
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add data/* || true
-          git commit -m "Daily data update" || echo "No changes to commit"
-          git push
+          aws s3 sync data/daily_bid_ask_distribution_data s3://kalshi-and-the-rise-of-macro-markets/daily_bid_ask_distribution_data
+          aws s3 sync data/daily_bid_ask_moments_data s3://kalshi-and-the-rise-of-macro-markets/daily_bid_ask_moments_data
+          aws s3 sync data/daily_distribution_data s3://kalshi-and-the-rise-of-macro-markets/daily_distribution_data
+          aws s3 sync data/daily_moments_data s3://kalshi-and-the-rise-of-macro-markets/daily_moments_data
+          echo $(date) > data/last_updated.txt
+          aws s3 cp data/last_updated.txt s3://kalshi-and-the-rise-of-macro-markets/
