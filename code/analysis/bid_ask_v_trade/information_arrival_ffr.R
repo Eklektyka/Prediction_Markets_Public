@@ -40,7 +40,11 @@ merge_bid_ask_with_trade <- function() {
   df <- full_join(kalshi_data, df)
   
   
-  df <- df %>% filter(horizon_date <= as.Date('2026-01-01') & horizon_date > as.Date('2022-01-01') & horizon_date != as.Date('2022-06-15'))
+  df <- df %>% filter(horizon_date <= as.Date('2026-01-01') & horizon_date > as.Date('2022-01-01') 
+                      # & horizon_date != as.Date('2022-06-15')
+                      )
+  
+  sep22 <- df %>% filter(horizon_date == as.Date('2022-06-15'))
   
   # Add column for "days before the decision"
   df <- df %>% mutate(days_before_decision = as.double(difftime(horizon_date , prediction_date , units = c("days"))),
