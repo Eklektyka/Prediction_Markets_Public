@@ -530,12 +530,16 @@
             const strikes = distributionData.map(row => parseFloat(row.strike));
             const probabilities = distributionData.map(row => parseFloat(row.probability));
 
-            // Create bin labels - strike represents lower bound of range
             const binLabels = strikes.map((strike, i) => {
-                if (i === strikes.length - 1) {
-                    return `≥ ${strike}`;
+                if (i === 0) {
+                    // First bin: < first strike value
+                    return `< ${strike}`;
+                } else if (i === strikes.length - 1) {
+                    // Last bin: from previous strike to infinity
+                    return `≥ ${strikes[i-1]}`;
                 } else {
-                    return `${strike} - ${strikes[i + 1]}`;
+                    // Middle bins: from previous strike to current strike
+                    return `${strikes[i-1]} - ${strike}`;
                 }
             });
 
