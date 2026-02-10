@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,40 +11,40 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #f5f5f5;
         }
-        
+
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 40px 20px;
         }
-        
+
         header {
             background: white;
             padding: 40px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
-        
+
         h1 {
             color: #2c3e50;
             font-size: 2.2em;
             margin-bottom: 15px;
         }
-        
+
         .subtitle {
             color: #666;
             font-size: 1.1em;
             margin-bottom: 20px;
         }
-        
+
         .citation {
             background: #f8f9fa;
             padding: 15px;
@@ -51,30 +52,30 @@
             border-left: 4px solid #3498db;
             margin-top: 20px;
         }
-        
+
         .citation-label {
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 5px;
         }
-        
+
         .citation a {
             color: #3498db;
             text-decoration: none;
         }
-        
+
         .citation a:hover {
             text-decoration: underline;
         }
-        
+
         .section {
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
-        
+
         h2 {
             color: #2c3e50;
             font-size: 1.6em;
@@ -82,57 +83,57 @@
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
         }
-        
+
         .dataset {
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
-        
+
         .dataset:last-child {
             border-bottom: none;
         }
-        
+
         .dataset-title {
             font-size: 1.3em;
             color: #2c3e50;
             margin-bottom: 10px;
             font-weight: 600;
         }
-        
+
         .dataset-description {
             color: #666;
             margin-bottom: 15px;
         }
-        
+
         .file-list {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
         }
-        
+
         .file-item {
             padding: 8px 0;
             display: flex;
             align-items: center;
         }
-        
+
         .file-item a {
             color: #3498db;
             text-decoration: none;
             font-family: 'Courier New', monospace;
             font-size: 0.95em;
         }
-        
+
         .file-item a:hover {
             text-decoration: underline;
         }
-        
+
         .download-icon {
             margin-right: 8px;
             color: #3498db;
         }
-        
+
         .last-updated {
             background: #e8f4f8;
             padding: 15px;
@@ -141,177 +142,123 @@
             font-size: 0.95em;
             color: #2c3e50;
         }
-        
+
         .about p {
             margin-bottom: 15px;
             color: #555;
         }
-        
+
         footer {
             text-align: center;
             padding: 30px 20px;
             color: #666;
             font-size: 0.9em;
         }
-        
-        .metadata {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .metadata-item {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 5px;
-        }
-        
-        .metadata-label {
-            font-size: 0.85em;
-            color: #666;
-            margin-bottom: 3px;
-        }
-        
-        .metadata-value {
-            font-weight: 600;
-            color: #2c3e50;
-        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>Kalshi-Implied Macroeconomic Expectations</h1>
             <p class="subtitle">Data supporting "Kalshi and The Rise of Macro Markets" (Diercks, Katz, Wright 2026)</p>
-            <p style="color: #555; margin-top: 10px;">
-                Daily probability distributions and statistical moments on macroeconomic expectations of Fed Funds Rates and other macroeconomic variables derived from Kalshi prediction market data.
-            </p>
-            
+            <p style="color: #555; margin-top: 10px;">Daily probability distributions and statistical moments on
+                macroeconomic expectations of Fed Funds Rates and other macroeconomic variables derived from Kalshi
+                prediction market data.</p>
             <div class="citation">
                 <div class="citation-label">Please cite:</div>
-                <div>Diercks, A., Katz, J., & Wright, J. (2026). Kalshi and The Rise of Macro Markets. 
-                    <a href="https://www.nber.org/papers/w34702" target="_blank">NBER Working Paper No. 34702</a>
-                </div>
+                <div>Diercks, A., Katz, J., & Wright, J. (2026). Kalshi and The Rise of Macro Markets. <a
+                        href="https://www.nber.org/papers/w34702" target="_blank">NBER Working Paper No. 34702</a></div>
             </div>
         </header>
-        
+
         <div class="section">
             <h2>Available Datasets</h2>
-            
             <div class="dataset">
                 <div class="dataset-title">📊 Probability Distributions</div>
-                <div class="dataset-description">
-                    Complete daily probability distributions for each macroeconomic variable in long-form data format. 
-                    Each row represents a probability mass at a specific outcome value for a given date.
-                </div>
+                <div class="dataset-description">Complete daily probability distributions for each macroeconomic
+                    variable in long-form data format. Each row represents a probability mass at a specific outcome
+                    value for a given date.</div>
                 <div class="file-list">
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_core_cpi_releases.csv" download>daily_distributions_core_cpi_releases.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_fed_levels.csv" download>daily_distributions_fed_levels.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_gdp_end_of_year.csv" download>daily_distributions_gdp_end_of_year.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_end_of_year.csv" download>daily_distributions_headline_cpi_end_of_year.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases_mom.csv" download>daily_distributions_headline_cpi_releases_mom.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases.csv" download>daily_distributions_headline_cpi_releases.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_unemployment_releases.csv" download>daily_distributions_unemployment_releases.csv</a>
-                    </div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_core_cpi_releases.csv"
+                            download>daily_distributions_core_cpi_releases.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_fed_levels.csv"
+                            download>daily_distributions_fed_levels.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_gdp_end_of_year.csv"
+                            download>daily_distributions_gdp_end_of_year.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_end_of_year.csv"
+                            download>daily_distributions_headline_cpi_end_of_year.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases_mom.csv"
+                            download>daily_distributions_headline_cpi_releases_mom.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_headline_cpi_releases.csv"
+                            download>daily_distributions_headline_cpi_releases.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_unemployment_releases.csv"
+                            download>daily_distributions_unemployment_releases.csv</a></div>
                 </div>
             </div>
-            
             <div class="dataset">
                 <div class="dataset-title">📈 Statistical Moments</div>
-                <div class="dataset-description">
-                    Daily summary statistics (mean, variance, skewness, kurtosis, etc.) computed from the probability distributions. 
-                    Each row represents one date with multiple statistical measures.
-                </div>
+                <div class="dataset-description">Daily summary statistics (mean, variance, skewness, kurtosis, etc.)
+                    computed from the probability distributions. Each row represents one date with multiple statistical
+                    measures.</div>
                 <div class="file-list">
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_core_cpi_releases.csv" download>daily_moments_core_cpi_releases.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_fed_levels.csv" download>daily_moments_fed_levels.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_gdp_end_of_year.csv" download>daily_moments_gdp_end_of_year.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_end_of_year.csv" download>daily_moments_headline_cpi_end_of_year.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases_mom.csv" download>daily_moments_headline_cpi_releases_mom.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases.csv" download>daily_moments_headline_cpi_releases.csv</a>
-                    </div>
-                    <div class="file-item">
-                        <span class="download-icon">⬇</span>
-                        <a href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_unemployment_releases.csv" download>daily_moments_unemployment_releases.csv</a>
-                    </div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_core_cpi_releases.csv"
+                            download>daily_moments_core_cpi_releases.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_fed_levels.csv"
+                            download>daily_moments_fed_levels.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_gdp_end_of_year.csv"
+                            download>daily_moments_gdp_end_of_year.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_end_of_year.csv"
+                            download>daily_moments_headline_cpi_end_of_year.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases_mom.csv"
+                            download>daily_moments_headline_cpi_releases_mom.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_headline_cpi_releases.csv"
+                            download>daily_moments_headline_cpi_releases.csv</a></div>
+                    <div class="file-item"><span class="download-icon">⬇</span><a
+                            href="https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_unemployment_releases.csv"
+                            download>daily_moments_unemployment_releases.csv</a></div>
                 </div>
             </div>
-            
-            <div class="last-updated" id="lastUpdated">
-                Loading update information...
-            </div>
+            <div class="last-updated" id="lastUpdated">Loading update information...</div>
         </div>
-        
+
         <div class="section about">
             <h2>About This Data</h2>
-            <p>
-                This dataset contains processed data from Kalshi prediction markets, providing daily estimates of market-implied 
-                probability distributions for key macroeconomic variables including Federal Funds Rates, CPI (both headline and core), 
-                GDP growth, and unemployment rates.
-            </p>
-            <p>
-                The data is derived from trade-level and orderbook-level observations from Kalshi's prediction markets and is updated daily 
-                through an automated pipeline. Researchers can use this data to study how market expectations evolve over time and how 
-                they respond to economic news and policy announcements.
-            </p>
-            <p>
-                <strong>Data Format:</strong> All files are provided as CSV (comma-separated values) files with headers. 
-                The distribution files use long-form format where each row represents a probability mass at a specific outcome. 
-                The moments files contain summary statistics with one row per date.
-            </p>
-            <p>
-                <strong>Update Frequency:</strong> This dataset is updated daily at approximately 5:00 AM UTC.
-            </p>
+            <p>This dataset contains processed data from Kalshi prediction markets, providing daily estimates of
+                market-implied probability distributions for key macroeconomic variables including Federal Funds Rates,
+                CPI (both headline and core), GDP growth, and unemployment rates.</p>
+            <p>The data is derived from trade-level and orderbook-level observations from Kalshi's prediction markets
+                and is updated daily through an automated pipeline. Researchers can use this data to study how market
+                expectations evolve over time and how they respond to economic news and policy announcements.</p>
+            <p><strong>Data Format:</strong> All files are provided as CSV (comma-separated values) files with headers.
+                The distribution files use long-form format where each row represents a probability mass at a specific
+                outcome. The moments files contain summary statistics with one row per date.</p>
+            <p><strong>Update Frequency:</strong> This dataset is updated weekly on Fridays,
+                approximately noon EST.</p>
         </div>
-        
+
         <div class="section">
             <h2>Explore the Data</h2>
-            <p style="color: #666; margin-bottom: 20px;">
-                Explore how market expectations evolved over time. Select a variable and moment to visualize.
-            </p>
-            
+            <p style="color: #666; margin-bottom: 20px;">Explore how market expectations evolved over time. Select a
+                variable and moment to visualize.</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Variable</label>
-                    <select id="variableSelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
+                <div><label
+                        style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Variable</label>
+                    <select id="variableSelect"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
                         <option value="fed_levels">Fed Funds Levels</option>
                         <option value="headline_cpi_releases">Headline CPI Releases</option>
                         <option value="core_cpi_releases">Core CPI Releases</option>
@@ -321,15 +268,16 @@
                         <option value="gdp_end_of_year">GDP End of Year</option>
                     </select>
                 </div>
-                <div>
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Contract</label>
-                    <select id="contractSelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
+                <div><label
+                        style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Contract</label>
+                    <select id="contractSelect"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
                         <option value="">Loading contracts...</option>
                     </select>
                 </div>
-                <div>
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Moment</label>
-                    <select id="momentSelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
+                <div><label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Moment</label>
+                    <select id="momentSelect"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
                         <option value="mean">Mean</option>
                         <option value="median">Median</option>
                         <option value="mode">Mode</option>
@@ -339,41 +287,109 @@
                     </select>
                 </div>
             </div>
-            
-            <div id="loadingMessage" style="text-align: center; padding: 40px; color: #666;">
-                Loading data...
+            <div style="margin-bottom: 20px;">
+                <button id="addComparisonBtn"
+                    style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: 600;">+
+                    Add Comparison</button>
+                <button id="removeComparisonBtn"
+                    style="display: none; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: 600; margin-left: 10px;">Remove
+                    Comparison</button>
+                <div id="axisToggle" style="display: none; margin-left: 20px;"><label
+                        style="color: #2c3e50; font-weight: 600;"><input type="checkbox" id="dualAxisCheckbox" checked
+                            style="margin-right: 5px;">Use separate y-axes</label></div>
             </div>
+            <div id="comparisonControls"
+                style="display: none; background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 1.1em;">Comparison Line</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div><label
+                            style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Variable</label>
+                        <select id="variableSelect2"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
+                            <option value="fed_levels">Fed Funds Levels</option>
+                            <option value="headline_cpi_releases">Headline CPI Releases</option>
+                            <option value="core_cpi_releases">Core CPI Releases</option>
+                            <option value="headline_cpi_releases_mom">Headline CPI Releases (MoM)</option>
+                            <option value="headline_cpi_end_of_year">Headline CPI End of Year</option>
+                            <option value="unemployment_releases">Unemployment Releases</option>
+                            <option value="gdp_end_of_year">GDP End of Year</option>
+                        </select>
+                    </div>
+                    <div><label
+                            style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Contract</label><select
+                            id="contractSelect2"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
+                            <option value="">Loading contracts...</option>
+                        </select></div>
+                    <div><label
+                            style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Moment</label>
+                        <select id="momentSelect2"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;">
+                            <option value="mean">Mean</option>
+                            <option value="median">Median</option>
+                            <option value="mode">Mode</option>
+                            <option value="variance">Variance</option>
+                            <option value="skewness">Skewness</option>
+                            <option value="kurtosis">Kurtosis</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="loadingMessage" style="text-align: center; padding: 40px; color: #666;">Loading data...</div>
             <div id="chart" style="width: 100%; height: 500px; display: none;"></div>
+            <div id="distributionSection"
+                style="display: none; margin-top: 30px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
+                <h3 style="color: #2c3e50; margin-bottom: 10px;">Probability Distribution</h3>
+                <p id="distributionHint" style="color: #666; margin-bottom: 15px;">Click any point on the chart above to
+                    view its probability distribution</p>
+                <div id="distributionLoading" style="display: none; text-align: center; padding: 40px; color: #666;">
+                    Loading distribution...</div>
+                <div id="distributionChart" style="width: 100%; height: 400px; display:
+                none;"></div>
+                <div id="dateSliderSection"
+                    style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2c3e50;">
+                        Select Date: <span id="selectedDateLabel" style="color: #3498db;"></span>
+                    </label>
+                    <input type="range" id="dateSlider" style="width: 100%; cursor: pointer;">
+                </div>
+            </div>
         </div>
-        
         <footer>
             <p>Data collected and processed by Anthony Diercks, Jared Katz, and Jonathan Wright</p>
-            <p style="margin-top: 10px; font-size: 0.85em;">
-                Questions or issues? Please reference the <a href="https://www.nber.org/papers/w34702" target="_blank" style="color: #3498db;">working paper</a> for methodology details.
-            </p>
+            <p style="margin-top: 10px; font-size: 0.85em;">Questions or issues? Please reference the <a
+                    href="https://www.nber.org/papers/w34702" target="_blank" style="color: #3498db;">working paper</a>
+                for methodology details.</p>
         </footer>
     </div>
-    
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <script>
+        // ============================================
+        // INITIALIZATION AND STATE
+        // ============================================
+        let currentData = null;
+        let currentData2 = null;
+        let availableContracts = [];
+        let availableContracts2 = [];
+        let currentDates = [];
+        let showComparison = false;
+        let useDualAxis = true;
+        let cachedDistributionData = null;
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+
         async function loadLastUpdated() {
             try {
                 const response = await fetch('https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/last_updated.txt');
                 const text = await response.text();
-                document.getElementById('lastUpdated').innerHTML = 
-                    `<strong>Last Updated:</strong> ${text.trim()}`;
+                document.getElementById('lastUpdated').innerHTML = `<strong>Last Updated:</strong> ${text.trim()}`;
             } catch (error) {
-                document.getElementById('lastUpdated').innerHTML = 
-                    '<strong>Last Updated:</strong> Information unavailable';
+                document.getElementById('lastUpdated').innerHTML = '<strong>Last Updated:</strong> Information unavailable';
             }
         }
-        
-        loadLastUpdated();
-        
-        // Chart functionality
-        let currentData = null;
-        let availableContracts = [];
-        
+
         async function loadChartData(variable) {
             const url = `https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_moments_data/daily_moments_${variable}.csv`;
             try {
@@ -385,12 +401,12 @@
                 return null;
             }
         }
-        
+
         function parseCSV(text) {
             const lines = text.trim().split('\n');
             const headers = lines[0].split(',').map(h => h.trim());
             const data = [];
-            
+
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',');
                 const row = {};
@@ -399,147 +415,27 @@
                 });
                 data.push(row);
             }
-            
+
             return { headers, data };
         }
-        
-        function parseContractToQuestion(contract, expiryDate) {
-            // Use the expiry_date from the CSV to create human-readable question
-            if (!expiryDate) return contract;
-            
-            // Parse expiry date (format: M/D/YY)
-            const dateParts = expiryDate.split('/');
-            if (dateParts.length !== 3) return contract;
-            
-            const month = parseInt(dateParts[0]);
-            const year = '20' + dateParts[2];
-            
-            const monthNames = [
-                'January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'
-            ];
-            const monthName = monthNames[month - 1];
-            
-            // Determine question based on contract ticker prefix
-            const ticker = contract.split('-')[0];
-            
-            const questionTemplates = {
-                'CPIYOY': `Headline CPI YoY - ${monthName} ${year} Release`,
-                'CPICORE': `Core CPI YoY - ${monthName} ${year} Release`,
-                'CPIMOM': `Headline CPI MoM - ${monthName} ${year} Release`,
-                'KXU': `Unemployment Rate - ${monthName} ${year} Release`,
-                'INFF': `Fed Funds Rate - ${monthName} ${year}`,
-                'GDP': `GDP - ${monthName} ${year}`
+
+        function parseContractToQuestion(contract) {
+            const parts = contract.split('-');
+            if (parts.length < 2) return contract;
+
+            const dateStr = parts[1];
+            const year = '20' + dateStr.substring(0, 2);
+            const monthCode = dateStr.substring(2);
+
+            const monthMap = {
+                'JAN': 'January', 'FEB': 'February', 'MAR': 'March', 'APR': 'April',
+                'MAY': 'May', 'JUN': 'June', 'JUL': 'July', 'AUG': 'August',
+                'SEP': 'September', 'OCT': 'October', 'NOV': 'November', 'DEC': 'December'
             };
-            
-            // Find matching template
-            for (const [key, template] of Object.entries(questionTemplates)) {
-                if (ticker.startsWith(key)) {
-                    return template;
-                }
-            }
-            
-            return `${contract} - ${monthName} ${year}`;
+
+            return `${monthMap[monthCode] || monthCode} ${year}`;
         }
-        
-        function populateContractDropdown() {
-            if (!currentData) return;
-            
-            // Get unique contracts with their expiry dates
-            const contractMap = new Map();
-            currentData.data.forEach(row => {
-                if (!contractMap.has(row.contract_preamble)) {
-                    contractMap.set(row.contract_preamble, row.expiry_date);
-                }
-            });
-            
-            // Convert to array and sort by expiry date (most recent first)
-            const contracts = Array.from(contractMap.entries()).map(([contract, expiryDate]) => ({
-                contract,
-                expiryDate,
-                sortDate: new Date(expiryDate)
-            }));
-            
-            contracts.sort((a, b) => b.sortDate - a.sortDate);
-            
-            availableContracts = contracts.map(c => c.contract);
-            
-            const contractSelect = document.getElementById('contractSelect');
-            contractSelect.innerHTML = contracts.map(({ contract, expiryDate }) => {
-                const question = parseContractToQuestion(contract, expiryDate);
-                return `<option value="${contract}">${question}</option>`;
-            }).join('');
-            
-            // Update chart with first contract
-            if (contracts.length > 0) {
-                updateChart();
-            }
-        }
-        
-        function updateChart() {
-            if (!currentData) return;
-            
-            const moment = document.getElementById('momentSelect').value;
-            const variable = document.getElementById('variableSelect').value;
-            const selectedContract = document.getElementById('contractSelect').value;
-            
-            if (!selectedContract) return;
-            
-            // Filter data for selected contract
-            const contractData = currentData.data.filter(row => 
-                row.contract_preamble === selectedContract
-            );
-            
-            const dates = contractData.map(row => row.date);
-            const values = contractData.map(row => parseFloat(row[moment]));
-            
-            const trace = {
-                x: dates,
-                y: values,
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: {
-                    color: '#3498db',
-                    width: 2
-                },
-                marker: {
-                    size: 4,
-                    color: '#3498db'
-                },
-                hovertemplate: '<b>%{x}</b><br>' + moment + ': %{y:.4f}<extra></extra>'
-            };
-            
-            const layout = {
-                title: {
-                    text: `${moment.charAt(0).toUpperCase() + moment.slice(1)} - ${parseContractToQuestion(selectedContract, contractData[0]?.expiry_date || '')}`,
-                    font: { size: 18, color: '#2c3e50' }
-                },
-                xaxis: {
-                    title: 'Date',
-                    gridcolor: '#f0f0f0'
-                },
-                yaxis: {
-                    title: moment.charAt(0).toUpperCase() + moment.slice(1),
-                    gridcolor: '#f0f0f0'
-                },
-                hovermode: 'closest',
-                plot_bgcolor: '#fafafa',
-                paper_bgcolor: 'white',
-                margin: { t: 60, r: 40, b: 60, l: 60 }
-            };
-            
-            const config = {
-                responsive: true,
-                displayModeBar: true,
-                modeBarButtonsToRemove: ['lasso2d', 'select2d'],
-                displaylogo: false
-            };
-            
-            Plotly.newPlot('chart', [trace], layout, config);
-            document.getElementById('chart').style.display = 'block';
-            document.getElementById('loadingMessage').style.display = 'none';
-        }
-        
+
         function getVariableTitle(variable) {
             const titles = {
                 'core_cpi_releases': 'Core CPI Releases',
@@ -552,28 +448,439 @@
             };
             return titles[variable] || variable;
         }
-        
+
+        function getContractSortValue(contract) {
+            const parts = contract.split('-');
+            if (parts.length < 2) return 0;
+
+            const dateStr = parts[1];
+            const year = parseInt(dateStr.substring(0, 2));
+            const monthCode = dateStr.substring(2);
+
+            const monthOrder = {
+                'JAN': 1, 'FEB': 2, 'MAR': 3, 'APR': 4, 'MAY': 5, 'JUN': 6,
+                'JUL': 7, 'AUG': 8, 'SEP': 9, 'OCT': 10, 'NOV': 11, 'DEC': 12
+            };
+
+            return year * 100 + (monthOrder[monthCode] || 0);
+        }
+
+        function filterRecentContracts(contracts, variable) {
+            // Don't filter annual contracts - show all
+            const annualVariables = ['gdp_end_of_year', 'headline_cpi_end_of_year'];
+            if (annualVariables.includes(variable)) {
+                return contracts;
+            }
+
+            if (contracts.length === 0) return contracts;
+
+            // Get current date
+            const now = new Date();
+            const currentYear = now.getFullYear() % 100; // Get last 2 digits (e.g., 26 for 2026)
+            const currentMonth = now.getMonth() + 1; // 1-12
+            const currentValue = currentYear * 100 + currentMonth; // e.g., 2601 for Jan 2026
+
+            // Filter contracts: keep all past ones, but only near-future ones
+            const filtered = contracts.filter(contract => {
+                const contractValue = getContractSortValue(contract);
+                const monthsDiff = contractValue - currentValue;
+
+                // Keep all past contracts (monthsDiff <= 0) and future contracts within 6 months
+                return monthsDiff <= 2;
+            });
+
+            return filtered.length > 0 ? filtered : contracts; // Fallback to all if filter is too aggressive
+        }
+
+        // ============================================
+        // DISTRIBUTION FUNCTIONS
+        // ============================================
+
+        async function loadDistributionData(variable, contract, date) {
+            const url = `https://kalshi-and-the-rise-of-macro-markets.s3.amazonaws.com/daily_distribution_data/daily_distributions_${variable}.csv`;
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                const parsed = parseCSV(text);
+                return parsed.data.filter(row =>
+                    row.contract_preamble === contract && row.date === date
+                );
+            } catch (error) {
+                console.error('Error loading distribution data:', error);
+                return null;
+            }
+        }
+
+        async function showDistribution(variable, contract, date) {
+            document.getElementById('distributionSection').style.display = 'block';
+            document.getElementById('distributionLoading').style.display = 'block';
+            document.getElementById('distributionChart').style.display = 'none';
+            document.getElementById('distributionHint').style.display = 'none';
+
+            const distributionData = await loadDistributionData(variable, contract, date);
+
+            if (!distributionData || distributionData.length === 0) {
+                document.getElementById('distributionLoading').innerHTML =
+                    '<span style="color: #e74c3c;">No distribution data available for this date</span>';
+                return;
+            }
+
+            distributionData.sort((a, b) => parseFloat(a.strike) - parseFloat(b.strike));
+
+            const strikes = distributionData.map(row => parseFloat(row.strike));
+            const probabilities = distributionData.map(row => parseFloat(row.probability));
+
+            // Create bin labels - strike represents lower bound of range
+            const binLabels = strikes.map((strike, i) => {
+                if (i === strikes.length - 1) {
+                    return `≥ ${strike}`;
+                } else {
+                    return `${strike} - ${strikes[i + 1]}`;
+                }
+            });
+
+            const trace = {
+                x: binLabels,
+                y: probabilities,
+                type: 'bar',
+                marker: {
+                    color: '#3498db',
+                    line: { color: '#2980b9', width: 1 }
+                },
+                hovertemplate: '%{x}<br>Probability: %{y:.2f}%<extra></extra>'
+            };
+
+            const layout = {
+                title: {
+                    text: `Distribution for ${getVariableTitle(variable)} - ${parseContractToQuestion(contract)} on ${date}`,
+                    font: { size: 16, color: '#2c3e50' }
+                },
+                xaxis: {
+                    title: 'Outcome Range',
+                    gridcolor: '#f0f0f0'
+                },
+                yaxis: {
+                    title: 'Probability (%)',
+                    gridcolor: '#f0f0f0'
+                },
+                plot_bgcolor: '#fafafa',
+                paper_bgcolor: 'white',
+                margin: { t: 60, r: 40, b: 60, l: 80 }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+                displaylogo: false
+            };
+
+            Plotly.newPlot('distributionChart', [trace], layout, config);
+            document.getElementById('distributionChart').style.display = 'block';
+            document.getElementById('distributionLoading').style.display = 'none';
+        }
+
+        // ============================================
+        // CHART FUNCTIONS
+        // ============================================
+
+        function updateChart() {
+            if (!currentData) return;
+
+            const moment = document.getElementById('momentSelect').value;
+            const variable = document.getElementById('variableSelect').value;
+            const selectedContract = document.getElementById('contractSelect').value;
+
+            if (!selectedContract) return;
+
+            const contractData = currentData.data.filter(row =>
+                row.contract_preamble === selectedContract
+            );
+
+            const dates = contractData.map(row => row.date);
+            const values = contractData.map(row => parseFloat(row[moment]));
+
+            const trace1 = {
+                x: dates,
+                y: values,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: `${getVariableTitle(variable)} - ${parseContractToQuestion(selectedContract)}`,
+                line: { color: '#3498db', width: 2 },
+                marker: { size: 4, color: '#3498db' },
+                hovertemplate: '<b>%{x}</b><br>' + moment + ': %{y:.4f}<extra></extra>',
+                yaxis: 'y'
+            };
+
+            const traces = [trace1];
+
+            // Add comparison trace if enabled
+            if (showComparison && currentData2) {
+                const moment2 = document.getElementById('momentSelect2').value;
+                const variable2 = document.getElementById('variableSelect2').value;
+                const selectedContract2 = document.getElementById('contractSelect2').value;
+
+                if (selectedContract2) {
+                    const contractData2 = currentData2.data.filter(row =>
+                        row.contract_preamble === selectedContract2
+                    );
+
+                    const dates2 = contractData2.map(row => row.date);
+                    const values2 = contractData2.map(row => parseFloat(row[moment2]));
+
+                    const trace2 = {
+                        x: dates2,
+                        y: values2,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: `${getVariableTitle(variable2)} - ${parseContractToQuestion(selectedContract2)}`,
+                        line: { color: '#e74c3c', width: 2 },
+                        marker: { size: 4, color: '#e74c3c' },
+                        hovertemplate: '<b>%{x}</b><br>' + moment2 + ': %{y:.4f}<extra></extra>',
+                        yaxis: useDualAxis ? 'y2' : 'y'
+                    };
+
+                    traces.push(trace2);
+                }
+            }
+
+            const title = showComparison && traces.length > 1
+                ? 'Comparison Chart'
+                : `${getVariableTitle(variable)} - ${parseContractToQuestion(selectedContract)} - ${moment.charAt(0).toUpperCase() + moment.slice(1)}`;
+
+            const layout = {
+                title: {
+                    text: title,
+                    font: { size: 18, color: '#2c3e50' }
+                },
+                xaxis: {
+                    title: 'Date',
+                    gridcolor: '#f0f0f0',
+                    domain: [0, 1]
+                },
+                yaxis: {
+                    title: showComparison && traces.length > 1 && useDualAxis
+                        ? `${moment.charAt(0).toUpperCase() + moment.slice(1)} (${parseContractToQuestion(selectedContract)})`
+                        : showComparison && traces.length > 1
+                            ? 'Value'
+                            : moment.charAt(0).toUpperCase() + moment.slice(1),
+                    titlefont: showComparison && traces.length > 1 && useDualAxis
+                        ? { color: '#3498db' }
+                        : { color: '#2c3e50' },
+                    tickfont: showComparison && traces.length > 1 && useDualAxis
+                        ? { color: '#3498db' }
+                        : { color: '#2c3e50' },
+                    gridcolor: '#f0f0f0'
+                },
+                hovermode: 'closest',
+                plot_bgcolor: '#fafafa',
+                paper_bgcolor: 'white',
+                margin: { t: 60, r: 80, b: 60, l: 80 },
+                showlegend: showComparison && traces.length > 1
+            };
+
+            if (showComparison && traces.length > 1 && useDualAxis) {
+                const moment2 = document.getElementById('momentSelect2').value;
+                const selectedContract2 = document.getElementById('contractSelect2').value;
+
+                layout.yaxis2 = {
+                    title: `${moment2.charAt(0).toUpperCase() + moment2.slice(1)} (${parseContractToQuestion(selectedContract2)})`,
+                    titlefont: { color: '#e74c3c' },
+                    tickfont: { color: '#e74c3c' },
+                    overlaying: 'y',
+                    side: 'right'
+                };
+            }
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+                displaylogo: false
+            };
+
+            Plotly.newPlot('chart', traces, layout, config);
+
+            // Add click handler for distribution viewer
+            const chartDiv = document.getElementById('chart');
+            chartDiv.on('plotly_click', function (data) {
+                const point = data.points[0];
+                const clickedDate = point.x;
+                const traceIndex = point.curveNumber;
+
+                if (traceIndex === 0) {
+                    const v = document.getElementById('variableSelect').value;
+                    const c = document.getElementById('contractSelect').value;
+                    showDistribution(v, c, clickedDate);
+                } else if (traceIndex === 1 && showComparison) {
+                    const v = document.getElementById('variableSelect2').value;
+                    const c = document.getElementById('contractSelect2').value;
+                    showDistribution(v, c, clickedDate);
+                }
+            });
+
+            document.getElementById('chart').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'none';
+
+            // Show distribution for most recent date by default
+            if (dates.length > 0) {
+                const mostRecentDate = dates[dates.length - 1];
+                showDistribution(variable, selectedContract, mostRecentDate);
+            }
+
+            // Set up date slider
+            currentDates = dates;
+            if (dates.length > 0) {
+                const sliderSection = document.getElementById('dateSliderSection');
+                const slider = document.getElementById('dateSlider');
+                const dateLabel = document.getElementById('selectedDateLabel');
+
+                sliderSection.style.display = 'block';
+                slider.min = 0;
+                slider.max = dates.length - 1;
+                slider.value = dates.length - 1; // Start at most recent
+
+                // Update label
+                dateLabel.textContent = dates[dates.length - 1];
+
+                // Add slider event listener
+                slider.oninput = function () {
+                    const selectedDate = dates[this.value];
+                    dateLabel.textContent = selectedDate;
+                    showDistribution(variable, selectedContract, selectedDate);
+                };
+
+                // Show distribution for most recent date by default
+                const mostRecentDate = dates[dates.length - 1];
+                showDistribution(variable, selectedContract, mostRecentDate);
+            }
+
+            document.getElementById('chart').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'none';
+        }
+
+        function populateContractDropdown() {
+            if (!currentData) return;
+
+            let contracts = [...new Set(currentData.data.map(row => row.contract_preamble))];
+            contracts.sort((a, b) => getContractSortValue(b) - getContractSortValue(a));
+
+            // Filter to only recent contracts
+            contracts = filterRecentContracts(contracts, document.getElementById('variableSelect').value);
+
+            availableContracts = contracts;
+
+            const contractSelect = document.getElementById('contractSelect');
+            contractSelect.innerHTML = contracts.map(contract =>
+                `<option value="${contract}">${parseContractToQuestion(contract)}</option>`
+            ).join('');
+
+            if (contracts.length > 0) {
+                updateChart();
+            }
+        }
+
+        function populateContractDropdown2() {
+            if (!currentData2) return;
+
+            let contracts = [...new Set(currentData2.data.map(row => row.contract_preamble))];
+            contracts.sort((a, b) => getContractSortValue(b) - getContractSortValue(a));
+
+            // Filter to only recent contracts
+            contracts = filterRecentContracts(contracts, document.getElementById('variableSelect2').value);
+
+            availableContracts2 = contracts;
+
+            const contractSelect = document.getElementById('contractSelect2');
+            contractSelect.innerHTML = contracts.map(contract =>
+                `<option value="${contract}">${parseContractToQuestion(contract)}</option>`
+            ).join('');
+
+            if (contracts.length > 0) {
+                updateChart();
+            }
+        }
+
         async function onVariableChange() {
             const variable = document.getElementById('variableSelect').value;
             document.getElementById('loadingMessage').style.display = 'block';
             document.getElementById('chart').style.display = 'none';
             document.getElementById('contractSelect').innerHTML = '<option value="">Loading contracts...</option>';
-            
+
             currentData = await loadChartData(variable);
             if (currentData) {
                 populateContractDropdown();
             } else {
-                document.getElementById('loadingMessage').innerHTML = 
+                document.getElementById('loadingMessage').innerHTML =
                     '<span style="color: #e74c3c;">Error loading data. Please try again.</span>';
             }
         }
-        
-        document.getElementById('variableSelect').addEventListener('change', onVariableChange);
-        document.getElementById('contractSelect').addEventListener('change', updateChart);
-        document.getElementById('momentSelect').addEventListener('change', updateChart);
-        
-        // Load initial chart
-        onVariableChange();
+
+        async function onVariableChange2() {
+            const variable = document.getElementById('variableSelect2').value;
+            document.getElementById('contractSelect2').innerHTML = '<option value="">Loading contracts...</option>';
+
+            currentData2 = await loadChartData(variable);
+            if (currentData2) {
+                populateContractDropdown2();
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        function initializeApp() {
+            // Main chart event listeners
+            document.getElementById('variableSelect').addEventListener('change', onVariableChange);
+            document.getElementById('contractSelect').addEventListener('change', updateChart);
+            document.getElementById('momentSelect').addEventListener('change', updateChart);
+
+            // Comparison chart event listeners
+            document.getElementById('variableSelect2').addEventListener('change', onVariableChange2);
+            document.getElementById('contractSelect2').addEventListener('change', updateChart);
+            document.getElementById('momentSelect2').addEventListener('change', updateChart);
+
+            // Comparison toggle buttons
+            document.getElementById('addComparisonBtn').addEventListener('click', () => {
+                showComparison = true;
+                document.getElementById('comparisonControls').style.display = 'block';
+                document.getElementById('addComparisonBtn').style.display = 'none';
+                document.getElementById('removeComparisonBtn').style.display = 'inline-block';
+                document.getElementById('axisToggle').style.display = 'inline-block';
+                onVariableChange2();
+            });
+
+            document.getElementById('removeComparisonBtn').addEventListener('click', () => {
+                showComparison = false;
+                currentData2 = null;
+                document.getElementById('comparisonControls').style.display = 'none';
+                document.getElementById('addComparisonBtn').style.display = 'inline-block';
+                document.getElementById('removeComparisonBtn').style.display = 'none';
+                document.getElementById('axisToggle').style.display = 'none';
+                updateChart();
+            });
+
+            // Dual axis checkbox
+            document.getElementById('dualAxisCheckbox').addEventListener('change', (e) => {
+                useDualAxis = e.target.checked;
+                updateChart();
+            });
+
+            // Load initial data
+            onVariableChange();
+        }
+
+        // Start the app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+
+        // Load last updated timestamp
+        loadLastUpdated();
     </script>
 </body>
+
 </html>
