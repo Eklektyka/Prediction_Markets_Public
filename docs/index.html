@@ -486,7 +486,7 @@
                 const monthsDiff = contractValue - currentValue;
                 
                 // Keep all past contracts (monthsDiff <= 0) and future contracts within 6 months
-                return monthsDiff <= 2;
+                return monthsDiff <= 1.5;
             });
             
             return filtered.length > 0 ? filtered : contracts; // Fallback to all if filter is too aggressive
