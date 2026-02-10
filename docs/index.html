@@ -481,26 +481,12 @@
             const currentMonth = now.getMonth() + 1; // 1-12
             const currentValue = currentYear * 100 + currentMonth; // e.g., 2601 for Jan 2026
             
-            // Special handling for Fed Funds - only show last 3 months
-            if (variable === 'fed_levels') {
-                const filtered = contracts.filter(contract => {
-                    const contractValue = getContractSortValue(contract);
-                    const monthsDiff = contractValue - currentValue;
-                    
-                    // Keep only contracts from 3 months ago to 6 months future
-                    return monthsDiff >= -3 && monthsDiff <= 6;
-                });
-                
-                return filtered.length > 0 ? filtered : contracts;
-            }
-            
-            // For other variables: keep all past contracts, only near-future ones
             const filtered = contracts.filter(contract => {
                 const contractValue = getContractSortValue(contract);
                 const monthsDiff = contractValue - currentValue;
                 
                 // Keep all past contracts (monthsDiff <= 0) and future contracts within 6 months
-                return monthsDiff <= 6;
+                return monthsDiff <= 2;
             });
             
             return filtered.length > 0 ? filtered : contracts; // Fallback to all if filter is too aggressive
@@ -604,20 +590,37 @@
 
         function updateChart() {
             if (!currentData) return;
-
+    
             const moment = document.getElementById('momentSelect').value;
             const variable = document.getElementById('variableSelect').value;
             const selectedContract = document.getElementById('contractSelect').value;
-
+            
             if (!selectedContract) return;
-
-            const contractData = currentData.data.filter(row =>
+            
+            let contractData = currentData.data.filter(row => 
                 row.contract_preamble === selectedContract
             );
-
+            
+            // For the most recent contract in fed_levels, only show last 3 months
+            if (variable === 'fed_levels') {
+                const allContracts = [...new Set(currentData.data.map(row => row.contract_preamble))];
+                allContracts.sort((a, b) => getContractSortValue(b) - getContractSortValue(a));
+                
+                // Check if this is the most recent contract
+                if (allContracts[0] === selectedContract) {
+                    // Filter to last 3 months of data
+                    const dates = contractData.map(row => new Date(row.date));
+                    const maxDate = new Date(Math.max(...dates));
+                    const threeMonthsAgo = new Date(maxDate);
+                    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                    
+                    contractData = contractData.filter(row => new Date(row.date) >= threeMonthsAgo);
+                }
+            }
+            
             const dates = contractData.map(row => row.date);
             const values = contractData.map(row => parseFloat(row[moment]));
-
+            
             const trace1 = {
                 x: dates,
                 y: values,
