@@ -357,10 +357,9 @@
         </div>
         <footer>
             <p>Data collected and processed by Anthony Diercks, Jared Katz, and Jonathan Wright</p>
-            <p style="margin-top: 10px; font-size: 0.85em;"> Please reference the <a
+            <p style="margin-top: 10px; font-size: 0.85em;">Questions or issues? Please reference the <a
                     href="https://www.nber.org/papers/w34702" target="_blank" style="color: #3498db;">working paper</a>
-                for methodology details. Website built with help from Claude, data automatically updating from Kalshi, methodology from <a
-                    href="https://www.nber.org/papers/w34702" target="_blank" style="color: #3498db;">Diercks, Katz, Wright (2026)</a>.</p>
+                for methodology details.</p>
         </footer>
     </div>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
@@ -472,23 +471,24 @@
             if (annualVariables.includes(variable)) {
                 return contracts;
             }
-            
+
             if (contracts.length === 0) return contracts;
-            
+
             // Get current date
             const now = new Date();
             const currentYear = now.getFullYear() % 100; // Get last 2 digits (e.g., 26 for 2026)
             const currentMonth = now.getMonth() + 1; // 1-12
             const currentValue = currentYear * 100 + currentMonth; // e.g., 2601 for Jan 2026
-            
+
+            // Filter contracts: keep all past ones, but only near-future ones
             const filtered = contracts.filter(contract => {
                 const contractValue = getContractSortValue(contract);
                 const monthsDiff = contractValue - currentValue;
-                
+
                 // Keep all past contracts (monthsDiff <= 0) and future contracts within 6 months
-                return monthsDiff <= 1.5;
+                return monthsDiff <= 2;
             });
-            
+
             return filtered.length > 0 ? filtered : contracts; // Fallback to all if filter is too aggressive
         }
 
@@ -530,16 +530,12 @@
             const strikes = distributionData.map(row => parseFloat(row.strike));
             const probabilities = distributionData.map(row => parseFloat(row.probability));
 
+            // Create bin labels - strike represents lower bound of range
             const binLabels = strikes.map((strike, i) => {
-                if (i === 0) {
-                    // First bin: < first strike value
-                    return `< ${strike}`;
-                } else if (i === strikes.length - 1) {
-                    // Last bin: from previous strike to infinity
-                    return `≥ ${strikes[i-1]}`;
+                if (i === strikes.length - 1) {
+                    return `≥ ${strike}`;
                 } else {
-                    // Middle bins: from previous strike to current strike
-                    return `${strikes[i-1]} - ${strike}`;
+                    return `${strike} - ${strikes[i + 1]}`;
                 }
             });
 
@@ -590,45 +586,20 @@
 
         function updateChart() {
             if (!currentData) return;
-    
+
             const moment = document.getElementById('momentSelect').value;
             const variable = document.getElementById('variableSelect').value;
             const selectedContract = document.getElementById('contractSelect').value;
-            
+
             if (!selectedContract) return;
-            
-            let contractData = currentData.data.filter(row => 
+
+            const contractData = currentData.data.filter(row =>
                 row.contract_preamble === selectedContract
             );
-            
-            // For the first (most recent available) contract in fed_levels, only show last 3 months
-            if (variable === 'fed_levels') {
-                // Get the filtered contracts that are actually shown in the dropdown
-                let displayedContracts = [...new Set(currentData.data.map(row => row.contract_preamble))];
-                displayedContracts.sort((a, b) => getContractSortValue(b) - getContractSortValue(a));
-                displayedContracts = filterRecentContracts(displayedContracts, variable);
-                
-                console.log('Selected contract:', selectedContract);
-                console.log('First displayed contract:', displayedContracts[0]);
-                console.log('Is first displayed?', displayedContracts[0] === selectedContract);
-                
-                // Check if this is the first displayed contract
-                if (displayedContracts.length > 0 && displayedContracts[0] === selectedContract) {
-                    const originalLength = contractData.length;
-                    
-                    // Sort by date to get the most recent
-                    contractData.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    
-                    // Keep only the most recent 3 months worth of data (roughly 90 data points if daily)
-                    contractData = contractData.slice(0, 90);
-                    
-                    console.log('Filtered from', originalLength, 'to', contractData.length, 'rows');
-                }
-            }
-            
+
             const dates = contractData.map(row => row.date);
             const values = contractData.map(row => parseFloat(row[moment]));
-            
+
             const trace1 = {
                 x: dates,
                 y: values,
