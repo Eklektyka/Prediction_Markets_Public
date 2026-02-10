@@ -357,9 +357,10 @@
         </div>
         <footer>
             <p>Data collected and processed by Anthony Diercks, Jared Katz, and Jonathan Wright</p>
-            <p style="margin-top: 10px; font-size: 0.85em;">Questions or issues? Please reference the <a
+            <p style="margin-top: 10px; font-size: 0.85em;"> Please reference the <a
                     href="https://www.nber.org/papers/w34702" target="_blank" style="color: #3498db;">working paper</a>
-                for methodology details.</p>
+                for methodology details. Website built with help from Claude, data automatically updating from Kalshi, methodology from <a
+                    href="https://www.nber.org/papers/w34702" target="_blank" style="color: #3498db;">Diercks, Katz, Wright (2026)</a>.</p>
         </footer>
     </div>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
@@ -471,24 +472,37 @@
             if (annualVariables.includes(variable)) {
                 return contracts;
             }
-
+            
             if (contracts.length === 0) return contracts;
-
+            
             // Get current date
             const now = new Date();
             const currentYear = now.getFullYear() % 100; // Get last 2 digits (e.g., 26 for 2026)
             const currentMonth = now.getMonth() + 1; // 1-12
             const currentValue = currentYear * 100 + currentMonth; // e.g., 2601 for Jan 2026
-
-            // Filter contracts: keep all past ones, but only near-future ones
+            
+            // Special handling for Fed Funds - only show last 3 months
+            if (variable === 'fed_levels') {
+                const filtered = contracts.filter(contract => {
+                    const contractValue = getContractSortValue(contract);
+                    const monthsDiff = contractValue - currentValue;
+                    
+                    // Keep only contracts from 3 months ago to 6 months future
+                    return monthsDiff >= -3 && monthsDiff <= 6;
+                });
+                
+                return filtered.length > 0 ? filtered : contracts;
+            }
+            
+            // For other variables: keep all past contracts, only near-future ones
             const filtered = contracts.filter(contract => {
                 const contractValue = getContractSortValue(contract);
                 const monthsDiff = contractValue - currentValue;
-
+                
                 // Keep all past contracts (monthsDiff <= 0) and future contracts within 6 months
-                return monthsDiff <= 2;
+                return monthsDiff <= 6;
             });
-
+            
             return filtered.length > 0 ? filtered : contracts; // Fallback to all if filter is too aggressive
         }
 
