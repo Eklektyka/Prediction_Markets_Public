@@ -536,11 +536,11 @@
                     // First bin: < first strike value
                     return `< ${strike.toFixed(2)}`;
                 } else if (i === strikes.length - 1) {
-                    // Last bin: from previous strike to infinity
-                    return `≥ ${strikes[i - 1].toFixed(2)}`;
+                    // Last bin: >= this strike to infinity
+                    return `≥ ${strike.toFixed(2)}`;
                 } else {
-                    // Middle bins: from previous strike to current strike
-                    return `${strikes[i - 1].toFixed(2)} - ${strike.toFixed(2)}`;
+                    // Middle bins: from current strike to next strike
+                    return `${strike.toFixed(2)} - ${strikes[i + 1].toFixed(2)}`;
                 }
             });
 
