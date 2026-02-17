@@ -48,15 +48,20 @@ In *Diercks, Katz, Wright (2026)*, these moments and distributions are used for 
 ## Instructions for Replicators
 
 1. Clone or download this repository and navigate to the root directory.
+
 2. Create `env.env` file in the root directory with your Kalshi API credentials:
 ```
    KALSHI_KEYID=your_key_here
    KALSHI_PRIVATE_KEY=your_private_key_here
 ```
-   To obtain credentials, register at [Kalshi's developer portal](https://kalshi.com/developers).
+   To obtain credentials, register at [Kalshi's developer portal](https://docs.kalshi.com/welcome).
+
 3. Install Python (3.11) and R dependencies listed above.
-4. **To download fresh data:** Run `python code/kalshi_scraping/scrape_kalshi_trades.py` from the repo root. This populates `data/trade_level_data` and `data/orderbook_data`.  
+
+4. **To download fresh data:** Run `python code/kalshi_scraping/scrape_kalshi_trades.py` from the
+   repo root. This populates `data/trade_level_data` and `data/orderbook_data`. 
    **To use provided data:** Skip this step — the data is already included.
+   
 5. Run `Rscript code/convert_trades_to_pdfs/data_convert_runner.R` from the repo root to generate daily-frequency moments and distributions.
 
 ### Python Dependencies
