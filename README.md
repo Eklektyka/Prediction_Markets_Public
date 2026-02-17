@@ -73,7 +73,7 @@ Python version: **3.11**
 install.packages(c("tidyverse", "lubridate", "matrixStats", "collapse", "DescTools"))
 ```
 
-### Full Workflow (GitHub Actions)
+### Full YAML workflow to get most recent data (See `.github/workflows` to see how website updates)
 
 ```yaml
 # Python setup
