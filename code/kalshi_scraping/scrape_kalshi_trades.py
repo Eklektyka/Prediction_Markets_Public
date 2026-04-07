@@ -150,7 +150,7 @@ Inputs:
 def scrape_kalshi(output_filename, tickers):
 
     results = pd.DataFrame(columns=['trade_id', 'ticker', 'count', 
-                                    'created_time', 'yes_price', 'no_price', 
+                                    'created_time', 'yes_price_dollars', 'no_price_dollars', 
                                     'taker_side'])
     for ticker in tickers:
         
@@ -182,7 +182,9 @@ def scrape_kalshi(output_filename, tickers):
     
         time.sleep(1) # pause for a second after each market to avoid rate limits
         
-        
+    # rename column to work with updated Kalshi API endpoints    
+    results = results.rename(columns={'yes_price_dollars': 'yes_price', 'no_price_dollars': 'no_price'})
+
     # Save the csv to output_filename
     results.to_csv(output_filename)
 
