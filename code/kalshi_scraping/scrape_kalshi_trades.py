@@ -71,8 +71,8 @@ from dotenv import load_dotenv
 from cryptography.hazmat.primitives import serialization
 
 # Set path according to your own computer directory
-os.chdir('/Users/jaredkatz/Documents/Research/PredictionMarketsReplication')
-sys.path.append('code/kalshi_scraping')
+# os.chdir('/Users/jaredkatz/Documents/Research/PredictionMarketsReplication')
+# sys.path.append('code/kalshi_scraping')
 
 repo_root = os.getcwd()
 sys.path.append(os.path.join(repo_root, "code/kalshi_scraping"))
