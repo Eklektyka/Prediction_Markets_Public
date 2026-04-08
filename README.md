@@ -1,5 +1,7 @@
 # Replication Package for Kalshi and the Rise of Macro Markets (2026)
 
+Note: In March 2026 Kalshi updated their API endpoints, changing the way you search for and access historical data. I am working on methods to continue pulling historical data, please be patient. The current code will work to pull data before the historical cutoff (100 days is how Kalshi has it set currently).
+
 ## Overview
 
 This replication package constructs the data from Kalshi used in *Diercks, Katz, Wright (2026)* using Python and R. It also creates a small website and GitHub Action that highlights the data and continually updates it over time.
