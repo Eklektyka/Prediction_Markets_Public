@@ -73,28 +73,28 @@ extract_distributions(
 source("code/convert_trades_to_pdfs/convert_bid_ask_data_cdfs.R")
 
 # FFR levels
-extract_distributions(input_file = 'data/orderbook_data/daily_bid_ask_fed_decisions_data.csv',
-                      output_distributions = 'data/daily_bid_ask_distribution_data/daily_distributions_fed_levels.csv',
-                      output_moments = 'data/daily_bid_ask_moments_data/daily_moments_fed_levels.csv',
-                      strike_int = 0.25,
-                      days_before_horizon = 180,
-                      moment_adjustment = .125)
-
-# CPI YoY Headline
-extract_distributions(input_file = 'data/orderbook_data/daily_bid_ask_cpi_data.csv',
-                      output_distributions = 'data/daily_bid_ask_distribution_data/daily_distributions_headline_cpi_releases.csv',
-                      output_moments = 'data/daily_bid_ask_moments_data/daily_moments_headline_cpi_releases.csv',
-                      strike_int = 0.1,
-                      days_before_horizon = 30,
-                      moment_adjustment = .1)
-
-# Unemployment
-extract_distributions(input_file = 'data/orderbook_data/daily_bid_ask_unemployment_data.csv',
-                      output_distributions = 'data/daily_bid_ask_distribution_data/daily_distributions_unemployment_releases.csv',
-                      output_moments = 'data/daily_bid_ask_moments_data/daily_moments_unemployment_releases.csv',
-                      strike_int = 0.1,
-                      days_before_horizon = 30,
-                      moment_adjustment = .1)
-
-
-
+# extract_distributions(input_file = 'data/orderbook_data/daily_bid_ask_fed_decisions_data.csv',
+#                       output_distributions = 'data/daily_bid_ask_distribution_data/daily_distributions_fed_levels.csv',
+#                       output_moments = 'data/daily_bid_ask_moments_data/daily_moments_fed_levels.csv',
+#                       strike_int = 0.25,
+#                       days_before_horizon = 180,
+#                       moment_adjustment = .125)
+# 
+# # CPI YoY Headline
+# extract_distributions(input_file = 'data/orderbook_data/daily_bid_ask_cpi_data.csv',
+#                       output_distributions = 'data/daily_bid_ask_distribution_data/daily_distributions_headline_cpi_releases.csv',
+#                       output_moments = 'data/daily_bid_ask_moments_data/daily_moments_headline_cpi_releases.csv',
+#                       strike_int = 0.1,
+#                       days_before_horizon = 30,
+#                       moment_adjustment = .1)
+# 
+# # Unemployment
+# extract_distributions(input_file = 'data/orderbook_data/daily_bid_ask_unemployment_data.csv',
+#                       output_distributions = 'data/daily_bid_ask_distribution_data/daily_distributions_unemployment_releases.csv',
+#                       output_moments = 'data/daily_bid_ask_moments_data/daily_moments_unemployment_releases.csv',
+#                       strike_int = 0.1,
+#                       days_before_horizon = 30,
+#                       moment_adjustment = .1)
+# 
+# 
+# 
