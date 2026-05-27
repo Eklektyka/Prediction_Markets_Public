@@ -78,3 +78,4 @@ jobs:
           aws s3 sync data/daily_moments_data s3://kalshi-and-the-rise-of-macro-markets/daily_moments_data
           echo $(date) > data/last_updated.txt
           aws s3 cp data/last_updated.txt s3://kalshi-and-the-rise-of-macro-markets/
+          aws s3 sync data/daily_distribution_data/wide s3://kalshi-and-the-rise-of-macro-markets/daily_distribution_data/wide
