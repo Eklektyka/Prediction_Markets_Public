@@ -297,9 +297,9 @@
         <div class="section">
             <h2>Available Datasets</h2>
             <div class="dataset">
-                <div class="dataset-title">Probability Distributions (Wide Format)</div>
-                <div class="dataset-description">Daily probability distributions for each macroeconomic variable in
-                    wide format. Each row represents a date and contract, with one column per strike value containing
+                <div class="dataset-title">Probability Distributions</div>
+                <div class="dataset-description">Daily probability distributions for each macroeconomic variable. Each
+                    row represents a date and contract, with one column per strike value containing
                     the probability at that outcome, plus a <code>total_volume</code> column. Only includes contracts
                     within 2 months of the horizon and excludes the most recent day.</div>
                 <div class="file-list">
@@ -477,19 +477,37 @@
 
             if (contracts.length === 0) return contracts;
 
-            // Get current date
+            // Current month as an absolute month index (year*12 + month).
             const now = new Date();
-            const currentYear = now.getFullYear() % 100;
-            const currentMonth = now.getMonth() + 1;
-            const currentValue = currentYear * 100 + currentMonth;
+            const currentMonthIndex = now.getFullYear() * 12 + (now.getMonth() + 1);
 
             const filtered = contracts.filter(contract => {
-                const contractValue = getContractSortValue(contract);
-                const monthsDiff = contractValue - currentValue;
+                const contractMonthIndex = getContractMonthIndex(contract);
+                if (contractMonthIndex === null) return false;
+                const monthsDiff = contractMonthIndex - currentMonthIndex;
                 return monthsDiff <= 2;
             });
 
             return filtered.length > 0 ? filtered : contracts;
+        }
+
+        function getContractMonthIndex(contract) {
+            const parts = contract.split('-');
+            if (parts.length < 2) return null;
+
+            const dateStr = parts[1];
+            const year = 2000 + parseInt(dateStr.substring(0, 2), 10);
+            const monthCode = dateStr.substring(2);
+
+            const monthOrder = {
+                'JAN': 1, 'FEB': 2, 'MAR': 3, 'APR': 4, 'MAY': 5, 'JUN': 6,
+                'JUL': 7, 'AUG': 8, 'SEP': 9, 'OCT': 10, 'NOV': 11, 'DEC': 12
+            };
+
+            const month = monthOrder[monthCode];
+            if (!month) return null;
+
+            return year * 12 + month;
         }
 
         // ============================================
