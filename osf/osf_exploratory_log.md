@@ -108,6 +108,26 @@ and the youth and liquidity asymmetry of Kalshi sports.
 
 ---
 
+## Amendment: Track B Phase 1 holdout scoring scope
+
+**Date:** 2026-07-13  
+**Commit of original freeze:** 7d61b9c  
+**Status:** pre-holdout; holdout data in `data/holdout/` not yet accessed.
+
+The pre-registered continuation hypothesis (positive OFI predicts positive next-bar price change) is rejected on training data. The measured Phase 1 coefficient is negative (beta = -5.212e-9, perm_p = 0.0095), indicating short-horizon reversal, not continuation.
+
+Exploratory analysis on the training panel found: z-OFI Q5-Q1 lag-1 spread = -0.12 ct (t = -3.91); volume-scaled OFI Q5-Q1 lag-1 = -0.34 ct (t = -6.34, monotone). The reversal is sub-tick and economically small relative to the round-trip fee (~3.45 ct at median price).
+
+The sealed holdout (20 fights, 2 fight cards) will be scored **once** on the following pre-specified criterion:
+
+> **Confirmation = both spreads negative.**
+> (a) z-OFI Q5-Q1 lag-1 spread < 0
+> (b) volume-scaled OFI Q5-Q1 lag-1 spread < 0
+
+No other holdout statistics will be computed or reported. The holdout is scored on sign only, not magnitude or significance.
+
+---
+
 ## Sequencing
 
 The Track A pilot and Track B Phase 1 may be run in parallel now, since both rely only on
