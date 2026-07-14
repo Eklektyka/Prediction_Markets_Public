@@ -1,7 +1,7 @@
 # Exhibit Manifest
 **Generated:** code/exhibit_freeze.py
 **Bootstrap:** B=1000, seed=42, two-stage (per-fight stats → resample fight rows)
-**Total runtime:** 5.7s
+**Total runtime:** 5.8s
 
 | Exhibit | Files | Source panel | Source QA | Description |
 |:--------|:------|:------------|:----------|:------------|
@@ -12,11 +12,11 @@
 | 5 | ex5_ownflow.{csv,md} | — (hardcoded from QA) | qa/phase1_quintile_sort.md, qa/trackB_phase1_holdout_score.md, qa/trackB_confirmatory_score.md | Phase 1 OFI quintile sort summary |
 
 ## Key parameters
-- pm_flip exclusions: ['20250823_MUDBOR', '20250906_HARFER', '20250906_SAIRUF', '20251122_SPIGAZ']
+- pm_flip exclusions: ['20250823_MUDBOR', '20250906_HARFER', '20250906_SAIRUF']
 - Jump threshold (Panel A): 3¢
 - Jump threshold (Panel B): 5¢
 - Persistence: ≥50% of jump survives 60 min (2 bars at 30-min)
 - Gap open: 5¢ → close: 2¢
-- Tier: main_event = top 10th decile by combined K+PM volume (≥2,444,123)
+- Tier: main_event = top 10th decile by combined K+PM volume (≥2,429,505)
 - 5-min stratum: fights with co-active% ≥ 25% (10 fights)
-- 30-min stratum: all 178 fights
+- 30-min stratum: all 179 fights

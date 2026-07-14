@@ -7,5 +7,5 @@
 | Stratum | Type | Tier | N ep | N closed | N censored | Median min [95% CI] | <30m | <2h | <6h | Note |
 |:------|:---|:---|:---|:-------|:---------|:------------------|:---|:---|:---|:---|
 | ACTIVE | ACTIVE | main_event | 9 | 9 | 0 | 30 [5,90] | 44% | 89% | 100% | N=9 |
-| ACTIVE | ACTIVE | undercard | 120 | 105 | 15 | 120 [85,210] | 22% | 49% | 73% | N=105 |
-| STALE-SIDE | STALE-SIDE | all | 7 | 6 | 1 | 10 [5,495] | 67% | 83% | 83% | N=6 |
+| ACTIVE | ACTIVE | undercard | 132 | 117 | 15 | 100 [75,165] | 26% | 52% | 75% | N=117 |
+| STALE-SIDE | STALE-SIDE | all | 8 | 7 | 1 | 10 [5,40] | 71% | 86% | 86% | N=7 |

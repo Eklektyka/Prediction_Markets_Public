@@ -37,9 +37,12 @@ OUT_DIR = ROOT / "paper/exhibits"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── constants ─────────────────────────────────────────────────────────────────
+# MUDBOR MAD=22.49c, SAIRUF MAD=20.30c — PM side inverted, excluded.
+# HARFER — 0 co-active bars, no data, excluded.
+# SPIGAZ MAD=4.80c — crosswalk remap validated (hygiene_block1 PASS), reincluded.
 PM_FLIP_EXCLUDE = {
     "20250823_MUDBOR", "20250906_HARFER",
-    "20250906_SAIRUF", "20251122_SPIGAZ",
+    "20250906_SAIRUF",
 }
 JUMP_THRESH  = 0.03       # 3 cents (prices in 0-1 scale)
 JUMP_BIG     = 0.05       # 5 cents
