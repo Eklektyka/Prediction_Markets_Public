@@ -46,7 +46,7 @@ PERSISTENT = A's price still >= 50% of jump after 60 min (2 bars). Values = B's 
 | >=5c | 2026_collector | K->PM | 10 | 7 (70.0%) | 1 (10.0%) | 2  (20.0%) |
 | >=5c | 2026_collector | PM->K | 17 | 9 (52.9%) | 7 (41.2%) | 1  (5.9%) |
 
-*2026_collector 69.4% PENDING ROBUSTNESS: fight-clustered bootstrap CI [-0.023, +0.374], p=0.076 — does not survive clustering at N=36 jumps / 91 fights. See qa/phase2_asymmetry_robustness_v2.md. Direction consistent with pooled finding; underpowered due to small N. The pooled 3c result (+12.7pp, p=0.012) survives and is dominated by 2025_lychee era.
+*2026_collector 69.4%: fight-clustered bootstrap CI [-2.3, +37.4]pp, p=0.076 — does not survive clustering at N=36 jumps / 91 fights. Direction consistent with pooled finding; underpowered. Additional caveats: (a) 2026 PM is global CLOB only, US QCX flow absent; (b) thin 2026 PM books (median 154 vs 422 trades/fight) increase PM price staleness at jump moment, mechanically inflating K->PM same-rate. Verdict deferred. Full robustness suite in **Ex7**. The pooled 3c result (+12.7pp, p=0.012) survives and is dominated by 2025_lychee era.
 
 **2026 PM venue-coverage caveat:** 2026_collector PM sourced from global Polymarket CLOB only (data-api.polymarket.com); US QCX order flow excluded. See Ex6.
 

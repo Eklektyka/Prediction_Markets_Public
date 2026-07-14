@@ -3,6 +3,7 @@
 **Generated:** code/exhibit_freeze.py
 **Eras:** 2025_lychee (Lychee on-chain dump, May-Nov 2025) + 2026_collector (Task Scheduler, Apr-Jul 2026)
 **2026 PM caveat:** 2026_collector columns reflect global Polymarket CLOB only (data-api.polymarket.com); US QCX order flow excluded. See Ex6 for era-thinness detail.
+**Exclusion chain:** 315 crosswalked → 299 exact-matched (186 2025_lychee + 113 2026_collector) → 282 built (17 skipped: 4 zero-trades-both-venues 2025, 13 zero-PM 2026) → **281 analyzed** (1 excluded: 20250906_HARFER, booking change, 0 co-active bars). Four in-panel zero-co-active fights contribute zero observations to Ex2–Ex4: ALSCAM, NASEST, BUKBEL, HOLSMI.
 
 ### 1A — Overall sample (pooled + per-era)
 

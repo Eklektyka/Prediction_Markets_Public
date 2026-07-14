@@ -1,5 +1,6 @@
 # Exhibit Manifest
-**Generated:** code/exhibit_freeze.py
+**Panel builder:** code/phase2_combined_panel_build.py → data/clean/phase2_full_panel.parquet
+**Exhibit generator:** code/exhibit_freeze.py (Ex1–Ex6 only; Ex7 from QA frozen output)
 **Bootstrap:** B=1000, seed=42, two-stage (per-fight stats -> resample fight rows)
 **Total runtime:** 16.1s
 **Panel:** combined 2025_lychee (N=181) + 2026_collector (N=100) = 281 fights
@@ -12,6 +13,7 @@
 | 4 | ex4_gap.{csv,md} | phase2_full_panel.parquet | qa/phase2_full_jump_anatomy.md, qa/phase2_jump_inference.md | Gap closure by tier (pooled + per-era) |
 | 5 | ex5_ownflow.{csv,md} | -- (hardcoded from QA) | qa/phase1_quintile_sort.md, qa/trackB_phase1_holdout_score.md, qa/trackB_confirmatory_score.md | Phase 1 OFI quintile sort summary |
 | 6 | ex6_pm_depth.{csv,md} | phase2_full_panel.parquet + pm_gapfill_trades.parquet | qa/phase2_mcghol_diagnosis.md | Supplementary: PM book depth by era (thinness table); venue-coverage caveat |
+| 7 | ex7_asymmetry.{csv,md} | phase2_full_panel.parquet | qa/phase2_asymmetry_robustness_v2.md | Supplementary: jump asymmetry robustness — pooled/2025/2026 x 3c/5c, fight-clustered bootstrap CIs |
 
 ## Exclusion chain
 - Crosswalk: 315 rows total → 186 2025_lychee exact + 113 2026_collector exact = **299 exact-matched UFC fights**
@@ -26,8 +28,9 @@
 
 The 2026_collector PM leg uses `data-api.polymarket.com/trades?market=<conditionId>` (global
 CLOB taker-view). This endpoint **does not include US QCX order flow** (Polymarket's separate
-US-licensed order book, launched 2025). All 2026 per-era columns in Exhibits 1–4 are therefore
-based on global-CLOB PM only.
+US-licensed order book, launched 2025). US QCX has no public historical API and is therefore
+absent from all 2026 PM data. All 2026 per-era columns in Exhibits 1–4 and Ex7 are therefore
+based on global-CLOB PM only. This note qualifies every 2026_collector column in Ex1–Ex4 and Ex7.
 
 Magnitude of thinness: 2026 PM median 154 trades/fight vs 2025 Lychee median 422 trades/fight
 (0.36x ratio). Bar-level coverage is better preserved (median 91 vs 106 active PM bars/fight,
