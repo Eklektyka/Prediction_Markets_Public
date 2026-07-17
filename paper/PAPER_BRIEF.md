@@ -65,9 +65,9 @@ artifact, not information asymmetry).
 | K→PM | +0.044 | [+0.006, +0.093] | YES |
 | PM→K | +0.034 | [+0.006, +0.070] | YES |
 
-Both directions: persistent price moves propagate ~4¢ to the other venue by +1h; transient
-moves show no propagation. Interpretation: information-driven jumps cross venues; noise
-does not.
+**Inference-backed:** Both direction CIs exclude zero at +1h. Persistent price moves
+propagate ~4¢ to the other venue by +1h; transient moves show no propagation.
+Interpretation: information-driven jumps cross venues; noise does not.
 
 **Level descriptives (not citable standalone — use contrast CI above):**
 
@@ -114,10 +114,10 @@ The era-to-era ratio of median PM trades per fight — a measure of whether PM l
 is stable across eras — is **0.81×** (154 ÷ 191). Both eras are now sourced identically
 from the Polymarket data-api; the comparison is valid.
 
-The ratio of 0.81 reflects a modest decline in per-fight PM activity in 2026 relative to
-2025, consistent with Polymarket's UFC coverage changing over time. It does not reflect
-a collapse in PM liquidity: PM provides 154 trades per fight median in 2026, comparable
-to 2025's 191.
+The ratio of 0.81 reflects broadly stable per-fight PM depth across eras. PM provides
+154 trades per fight median in 2026, comparable to 2025's 191. **The globally accessible
+PM book failed to participate in the sport's order-of-magnitude growth.** Do not frame
+this as "PM thinned" — the PM book held steady; what changed is that Kalshi grew around it.
 
 The dominant era difference is on the **Kalshi side**: median K trades/fight grew from 161
 (2025) to 1,652 (2026), a roughly 10× increase. The apparent thinning of the cross-venue
@@ -140,6 +140,23 @@ The corrected ratio is 0.81×, explicitly recorded in paper/exhibits/MANIFEST.md
 | 2025_lychee / 3¢ | **YES** +14.3pp [+1.8, +26.4] | **YES** −29.5pp [−42.3, −18.3] |
 | 2025_lychee / 5¢ | no | no |
 | 2026_collector / 3¢ | no (N=36, underpowered) | no |
+
+---
+
+## Data pipeline (final)
+
+- 2025 PM leg = exchange API taker fills verified 1:1 against on-chain records
+  (complement-leg duplication in raw on-chain events documented and excluded; see
+  MANIFEST.md complement-leg correction section)
+- 2026 PM leg = exchange API collector (pm_gapfill.py); same source as 2025 post-fix
+- Both eras sourced identically from data-api.polymarket.com; comparison is valid
+- Single-vintage freeze bb5d695, seed=42, one script (`code/exhibit_freeze.py`), one run
+
+## Retired figures — MUST NOT appear in paper
+
+**0.36×** (fragmentation ratio, complement-contaminated 2025 data) — retired in MANIFEST.md 2026-07-17.
+**+12.7pp** (old same-dir asymmetry diff, pre-correction panel) — retired.
+Neither figure may appear in any paper draft, table, or slide.
 
 ---
 

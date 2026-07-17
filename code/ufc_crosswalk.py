@@ -3,7 +3,7 @@ ufc_crosswalk.py — Build Kalshi ↔ Polymarket UFC fight crosswalk
 
 Stages:
   1. Load + parse Kalshi KXUFC markets (453 rows → ~226 fight entities)
-  2. Load + parse Polymarket UFC markets (2097 rows)
+  2. Load + parse Polymarket UFC markets (ufc|mma slug + bare surname-vs-surname near fight dates)
   3. Match on event date (±1 day) + normalized fighter surname overlap
   4. Output data/meta/ufc_crosswalk.parquet
   5. Print match summary + all fuzzy/unmatched rows
@@ -30,6 +30,7 @@ LYCHEE_EXTRACT  = Path(r"C:\Kalshi_data\lychee\extracted\data")
 REPO            = Path(r"C:\Users\micha\OneDrive\Pulpit\Kalshi\Prediction_Markets_Public")
 PM_TRADES       = REPO / "data" / "interim" / "polymarket_ufc_trades.parquet"
 OUT_CROSSWALK   = REPO / "data" / "meta" / "ufc_crosswalk.parquet"
+OUT_OVERRIDES   = REPO / "data" / "meta" / "crosswalk_overrides.csv"
 OUT_VAL_DIR     = Path(r"C:\Kalshi_data\lychee\qa\crosswalk_validation")
 K_TRADES_DIR    = LYCHEE_EXTRACT / "kalshi" / "trades"
 K_MARKETS_DIR   = LYCHEE_EXTRACT / "kalshi" / "markets"
@@ -213,7 +214,34 @@ pm_all = pd.concat(pm_dfs, ignore_index=True)
 
 pm_ufc = pm_all[pm_all["slug"].str.contains("ufc|mma", case=False, na=False)].copy()
 pm_ufc["end_date"] = pd.to_datetime(pm_ufc["end_date"], utc=True, errors="coerce")
-print(f"  {len(pm_ufc)} UFC/MMA markets")
+print(f"  {len(pm_ufc)} UFC/MMA markets (ufc|mma slug filter)")
+
+# Secondary pass: bare surname-vs-surname slugs (no "ufc" prefix — used for some
+# May–Jun 2025 event cycles, e.g. "pereira-vs-ankalaev-2025-05-03")
+k_fight_dates = kf["event_date"].dt.normalize().unique()
+
+bare_mask = (
+    pm_all["slug"].str.match(
+        r"^[a-z0-9]+(?:-[a-z0-9]+)*-vs-[a-z0-9]+(?:-[a-z0-9]+)*(?:-\d+)?$",
+        na=False,
+    )
+    & ~pm_all["id"].isin(pm_ufc["id"])
+)
+pm_bare = pm_all[bare_mask].copy()
+pm_bare["end_date"] = pd.to_datetime(pm_bare["end_date"], utc=True, errors="coerce")
+
+# Keep only bare-slug markets whose end_date falls within ±1 day of a Kalshi fight date
+lo_arr = pd.DatetimeIndex(k_fight_dates).tz_localize("UTC") - pd.Timedelta(days=1)
+hi_arr = pd.DatetimeIndex(k_fight_dates).tz_localize("UTC") + pd.Timedelta(days=2)
+
+near = pd.Series(False, index=pm_bare.index)
+for lo, hi in zip(lo_arr, hi_arr):
+    near |= (pm_bare["end_date"] >= lo) & (pm_bare["end_date"] <= hi)
+pm_bare = pm_bare[near]
+print(f"  {len(pm_bare)} additional bare surname-vs-surname markets near Kalshi fight dates")
+
+pm_ufc = pd.concat([pm_ufc, pm_bare], ignore_index=True).drop_duplicates("id")
+print(f"  {len(pm_ufc)} total PM markets after broadening filter")
 
 # Parse each market
 pm_parsed = []
@@ -329,6 +357,59 @@ for _, krow in kf.iterrows():
 cw = pd.DataFrame(crosswalk_rows)
 
 # ─────────────────────────────────────────────────────────────────────────────
+# STAGE 3b — Apply manual overrides from crosswalk_overrides.csv
+# ─────────────────────────────────────────────────────────────────────────────
+if OUT_OVERRIDES.exists():
+    ov = pd.read_csv(OUT_OVERRIDES, dtype=str).fillna("")
+    print(f"\n[stage3b] applying {len(ov)} overrides from {OUT_OVERRIDES.name}")
+
+    # Build full PM market lookup (id → row) for REMAP support
+    pm_by_id = pmf.set_index("pm_id")
+
+    n_accept = n_remap = n_reject = 0
+    for _, ovrow in ov.iterrows():
+        fid    = ovrow["fight_id"].strip()
+        action = ovrow["action"].strip().upper()
+        new_pm = ovrow.get("correct_pm_id", "").strip()
+
+        mask = cw["fight_id"] == fid
+        if not mask.any():
+            print(f"  WARNING: fight_id {fid} not found in crosswalk — skipping")
+            continue
+
+        if action == "ACCEPT":
+            cw.loc[mask, "match_confidence"] = "exact"
+            n_accept += 1
+        elif action == "REMAP" and new_pm:
+            new_pm_key = str(new_pm).strip()  # pm_id column is string dtype
+            if new_pm_key in pm_by_id.index:
+                pm_row = pm_by_id.loc[new_pm_key]
+                if isinstance(pm_row, pd.DataFrame):  # multiple rows; take first
+                    pm_row = pm_row.iloc[0]
+                # Use .at for list-type columns (avoids ndarray shape issues)
+                for idx in cw.index[mask]:
+                    cw.at[idx, "pm_id"]          = new_pm_key
+                    cw.at[idx, "pm_slug"]        = pm_row["slug"]
+                    cw.at[idx, "pm_fight_date"]  = pm_row["fight_date"]
+                    cw.at[idx, "fighters_pm"]    = pm_row["fighters_pm"]
+                    cw.at[idx, "outcomes"]       = pm_row["outcomes"]
+                    cw.at[idx, "clob_token_ids"] = pm_row["clob_token_ids"]
+                    cw.at[idx, "pm_volume"]      = pm_row["volume"]
+                    cw.at[idx, "match_confidence"] = "exact"
+                n_remap += 1
+            else:
+                print(f"  WARNING: REMAP pm_id {new_pm_key} not found in PM data — skipping")
+        elif action == "REJECT":
+            cw.loc[mask, "match_confidence"] = "unmatched"
+            for col in ["pm_id","pm_slug","pm_fight_date","fighters_pm","outcomes","clob_token_ids","pm_volume"]:
+                cw.loc[mask, col] = None
+            n_reject += 1
+
+    print(f"  accepted={n_accept}  remapped={n_remap}  rejected={n_reject}")
+else:
+    print("[stage3b] no overrides file found — skipping")
+
+# ─────────────────────────────────────────────────────────────────────────────
 # STAGE 4 — Save crosswalk parquet
 # ─────────────────────────────────────────────────────────────────────────────
 # Serialize list columns to JSON strings for parquet storage
@@ -348,14 +429,14 @@ n_fuzzy   = (cw["match_confidence"] == "fuzzy").sum()
 n_unmatched = (cw["match_confidence"] == "unmatched").sum()
 
 print("\n" + "="*65)
-print("UFC VENUE CROSSWALK — MATCH SUMMARY")
+print("UFC VENUE CROSSWALK - MATCH SUMMARY")
 print("="*65)
 print(f"Kalshi KXUFC fights:   {n_total}")
 print(f"  exact matches:       {n_exact}  ({n_exact/n_total*100:.1f}%)")
 print(f"  fuzzy matches:       {n_fuzzy}  ({n_fuzzy/n_total*100:.1f}%)")
 print(f"  unmatched:           {n_unmatched}  ({n_unmatched/n_total*100:.1f}%)")
 
-print("\n── FUZZY MATCHES (needs manual review) ──")
+print("\n-- FUZZY MATCHES (needs manual review) --")
 fuz = cw[cw["match_confidence"] == "fuzzy"].copy()
 if fuz.empty:
     print("  (none)")
@@ -365,7 +446,7 @@ else:
         pm_names = ", ".join(r["fighters_pm"]) if r["fighters_pm"] else "?"
         print(f"  {r['event_date'].date()}  K=[{k_names}]  PM=[{pm_names}]  slug={r['pm_slug']}")
 
-print("\n── UNMATCHED KALSHI FIGHTS ──")
+print("\n-- UNMATCHED KALSHI FIGHTS --")
 unm = cw[cw["match_confidence"] == "unmatched"].copy()
 if unm.empty:
     print("  (none)")
@@ -374,7 +455,7 @@ else:
         k_names = ", ".join(r["fighters_kalshi"])
         print(f"  {r['event_date'].date()}  [{k_names}]  tickers={r['tickers']}")
 
-print("\n── TOP 20 EXACT MATCHES (by Kalshi volume) ──")
+print("\n-- TOP 20 EXACT MATCHES (by Kalshi volume) --")
 top_exact = cw[cw["match_confidence"] == "exact"].nlargest(20, "kalshi_volume")
 for _, r in top_exact.iterrows():
     k = ", ".join(r["fighters_kalshi"])
@@ -556,9 +637,9 @@ for i, (_, fight) in enumerate(top5.iterrows(), 1):
         )
         mad = np.abs(pm_interp - k_resampled["price"].values).mean()
         flag = " *** DIVERGES" if mad > 0.10 else ""
-        print(f"  [{i}] {fight['event_date'].date()}  MAD={mad:.3f}{flag}  → {out_path.name}")
+        print(f"  [{i}] {fight['event_date'].date()}  MAD={mad:.3f}{flag}  -> {out_path.name}")
     else:
-        print(f"  [{i}] {fight['event_date'].date()}  insufficient data for convergence check  → {out_path.name}")
+        print(f"  [{i}] {fight['event_date'].date()}  insufficient data for convergence check  -> {out_path.name}")
 
 print(f"\nDone. Plots saved to {OUT_VAL_DIR}")
 print(f"Crosswalk: {OUT_CROSSWALK}")

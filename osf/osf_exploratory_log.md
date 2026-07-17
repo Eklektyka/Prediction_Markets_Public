@@ -128,6 +128,80 @@ No other holdout statistics will be computed or reported. The holdout is scored 
 
 ---
 
+## Amendment: Track A implementation decisions (pre-data, committed before any extraction)
+
+**Date:** 2026-07-13  
+**Commit of original freeze:** 7d61b9c  
+**Status:** no macro event-study numbers have been computed yet. All decisions below are
+pre-committed before any data is read for the purpose of constructing Jump or Drift.
+
+### 1. Ticker selection within a series
+
+Each Kalshi series has many simultaneously-traded contracts distinguished by a threshold
+(e.g., `KXPAYROLLS-26APR-T100000`, `KXPAYROLLS-26MAY-T50000`). The ticker encodes a
+month-year release date (e.g., `26APR` = April 2026).
+
+**Rule:** For a release event (series, t0) covering measured-month M, include only contracts
+whose embedded month-year matches M. For example, the April 2026 Employment release
+(2026-05-08) uses contracts `KXPAYROLLS-26APR-*` and `KXU3-26APR-*` only. Contracts for
+other months trading on the same calendar day are excluded (they update forward expectations,
+not the current release, and introduce a different information-processing question).
+
+The measured month is extracted from the release_name field in macro_calendar.parquet
+(e.g., "Employment Situation April 2026" → `26APR`).
+
+### 2. Missing-price rule (pre-committed before extraction)
+
+`last_price(t)` is the yes_price_dollars of the most recent trade at or before time t,
+within the window [t0 − 120 min, t0 + 120 min].
+
+- **No price at or before t0:** the (series, event, ticker) is dropped and flagged
+  `no_t0_price`. Cannot compute Jump.
+- **No new trade in (t0, t0+5min]:** price is carried forward from t0, so Jump = 0.
+  Observation is retained and flagged `zero_jump`. Zero-jump observations are included in
+  the primary regression; exclusion is labelled exploratory (not pre-registered).
+- **No price at t0+Δ for a drift horizon:** Drift(Δ) is set to missing for that observation
+  and excluded from the regression for that horizon only (not dropped from other horizons).
+
+### 3. Aggregation to unit of observation
+
+After computing Jump and Drift per (series, event, ticker), take the **mean** across all
+non-dropped tickers within the same (series, event). This yields one observation per
+(series, event) pair. The mean is taken before running the regression, not by including
+ticker-level rows with clustered SE, in order to avoid inflating N with within-event
+correlation.
+
+### 4. Holdout manifest
+
+The holdout (most recent released event per series as of 2026-07-13) is:
+
+| Series         | Release event          | release_time_utc        |
+|----------------|------------------------|-------------------------|
+| KXPAYROLLS     | Employment Jun 2026    | 2026-07-02 12:30 UTC    |
+| KXU3           | Employment Jun 2026    | 2026-07-02 12:30 UTC    |
+| KXCPIYOY       | CPI May 2026           | 2026-06-10 12:30 UTC    |
+| KXCPICOREYOY   | CPI May 2026           | 2026-06-10 12:30 UTC    |
+| KXFED          | FOMC Jun 2026          | 2026-06-17 18:00 UTC    |
+| KXFEDDECISION  | FOMC Jun 2026          | 2026-06-17 18:00 UTC    |
+
+A manifest CSV is written to `data/holdout/trackA_macro_holdout.csv` before any data
+is loaded. The extractor hard-codes these pairs as excluded from training.
+
+### 5. Training set and expected N
+
+After holdout exclusion, training events are:
+
+| Date (UTC)       | Series                  |
+|------------------|-------------------------|
+| 2026-05-08 12:30 | KXPAYROLLS, KXU3        |
+| 2026-05-12 12:30 | KXCPIYOY, KXCPICOREYOY  |
+| 2026-06-05 12:30 | KXPAYROLLS, KXU3        |
+
+N = 6 (series-event pairs). Kill rule applies: result is inconclusive; no inferential
+conclusion is drawn. The run is a dry-run of the pipeline for when N ≥ 20.
+
+---
+
 ## Sequencing
 
 The Track A pilot and Track B Phase 1 may be run in parallel now, since both rely only on
