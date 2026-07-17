@@ -6,12 +6,10 @@
 
 | Stratum | Type | Tier | N ep | N closed | N censored | Median min [95% CI] | <30m | <2h | <6h | Note |
 |:------|:---|:---|:---|:-------|:---------|:------------------|:---|:---|:---|:---|
-| ACTIVE pooled | ACTIVE | main_event | 12 | 12 | 0 | 38 [12,80] | 42% | 83% | 100% | N=12 |
-| ACTIVE pooled | ACTIVE | undercard | 145 | 127 | 18 | 120 [85,195] | 24% | 49% | 71% | N=127 |
-| STALE-SIDE pooled | STALE-SIDE | all | 9 | 8 | 1 | 10 [5,40] | 75% | 88% | 88% | N=8 |
-| ACTIVE 2025_lychee | ACTIVE | main_event | 12 | 12 | 0 | 38 [12,80] | 42% | 83% | 100% | N=12 |
-| ACTIVE 2025_lychee | ACTIVE | undercard | 130 | 115 | 15 | 115 [75,195] | 25% | 51% | 74% | N=115 |
+| ACTIVE pooled | ACTIVE | main_event | 12 | 12 | 0 | 32 [10,80] | 50% | 83% | 100% | N=12 |
+| ACTIVE pooled | ACTIVE | undercard | 144 | 126 | 18 | 118 [80,170] | 25% | 50% | 71% | N=126 |
+| STALE-SIDE pooled | STALE-SIDE | all | 11 | 10 | 1 | 10 [5,25] | 80% | 90% | 90% | N=10 |
+| ACTIVE 2025_lychee | ACTIVE | main_event | 12 | 12 | 0 | 32 [10,80] | 50% | 83% | 100% | N=12 |
+| ACTIVE 2025_lychee | ACTIVE | undercard | 129 | 114 | 15 | 98 [75,165] | 26% | 53% | 75% | N=114 |
 | ACTIVE 2026_collector | ACTIVE | main_event | 0 | 0 | 0 | n/a | n/a | n/a | n/a | n/a |
 | ACTIVE 2026_collector | ACTIVE | undercard | 15 | 12 | 3 | 375 [92,1115] | 17% | 25% | 42% | N=12 |
-
-*2026_collector rows use global Polymarket CLOB only (data-api.polymarket.com); US QCX flow excluded. 2026 PM ~3x thinner per fight (median 154 vs 422 trades); longer median closure time (375 min vs 115 min) consistent with thinner PM liquidity. See Ex6.*
