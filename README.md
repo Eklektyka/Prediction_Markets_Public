@@ -62,4 +62,4 @@ All three scripts are deterministic (seed=42). Runtime for exhibit_freeze.py is 
 
 ## Citation
 
-> *Cross-Venue Price Discovery in UFC Prediction Markets* (2026).
+> Michał Adamczewski, *Cross-Venue Price Discovery in UFC Prediction Markets* (2026).
