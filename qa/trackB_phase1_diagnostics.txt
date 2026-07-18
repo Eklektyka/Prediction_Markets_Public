@@ -1,0 +1,116 @@
+========================================================================
+TRACK B PHASE 1 -- MECHANISM DIAGNOSTICS  (exploratory, not pre-registered)
+========================================================================
+Pre-registered result: beta=-5.2121e-09, SE=2.3232e-09, perm_p=0.0095
+Signal is statistically significant but NEGATIVE (mean reversion, not continuation).
+These diagnostics test whether the reversal is mechanical (bounce) or behavioural.
+
+Data: 2,979,679 trades  |  204 markets  |  102 fights  (holdout excluded, coverage floor applied)
+Panel: 120,855 bar-observations  |  120,651 with lag-1 dprice available
+
+
+========================================================================
+DIAGNOSTIC 1 -- LAG STRUCTURE  (skip-one-bar test)
+========================================================================
+OFI(t) predicting the incremental price change at lag k.
+  Bounce       -> signal confined to lag 1; lags 2-5 ~= 0 and insignificant.
+  Overreaction -> signal decays gradually (still negative and significant at 2+).
+
+  Incremental dprice at lag k  [last_price(t+k) - last_price(t+k-1)]
+  ------------------------------------------------------------------------
+   Lag          Beta            SE        t         p         n      G  note
+  ------------------------------------------------------------------------
+     1    -5.211e-09     2.351e-09    -2.22    0.0266   120,651    102 <- pre-reg
+     2    -1.525e-08     1.219e-08    -1.25    0.2108   120,447    102
+     3    -9.845e-09     9.999e-09    -0.98    0.3248   120,243    102
+     4    -6.990e-09     7.362e-09    -0.95    0.3424   120,039    102
+     5     3.625e-10     1.514e-08     0.02    0.9809   119,835    102
+
+  Cumulative dprice at horizon k  [last_price(t+k) - last_price(t)]
+  ------------------------------------------------------------------------
+   Lag          Beta            SE        t         p         n      G  note
+  ------------------------------------------------------------------------
+     1    -5.211e-09     2.351e-09    -2.22    0.0266   120,651    102 <- pre-reg (= lag 1)
+     2    -1.908e-08     1.276e-08    -1.50    0.1347   120,447    102
+     3    -2.310e-08     2.125e-08    -1.09    0.2771   120,243    102
+     4    -2.031e-08     2.155e-08    -0.94    0.3459   120,039    102
+     5    -6.637e-09     2.697e-08    -0.25    0.8056   119,835    102
+
+  Read: if cum betas are flat (k=1 ~= k=2 ~= k=3), the reversal was complete
+  by lag 1 -> bounce. If cum betas grow more negative at k=2,3 -> overreaction.
+
+========================================================================
+DIAGNOSTIC 2 -- MAGNITUDE vs EFFECTIVE SPREAD
+========================================================================
+Is |beta x typical_OFI| ~= the effective half-spread?
+  Bounce    -> predicted reversal at median OFI ~= Roll half-spread.
+  Real sig. -> predicted reversal << Roll spread (or >> at plausible OFI).
+  (pre-registered beta = -5.2121e-09, SE = 2.3232e-09)
+
+  |OFI| distribution (net contracts per 5-min bar):
+  p10=        4  p25=       14  p50=       50  p75=      225  p90=    1,099  p99=   37,462
+  mean=   2,210.2  sd=  33,077.0  bars with OFI=0: 0.3%
+
+  Predicted reversal |beta x OFI| at each |OFI| percentile (dollars / cents):
+    p10  OFI=         4  ->  0.000000 $ = 0.0000 ct
+    p25  OFI=        14  ->  0.000000 $ = 0.0000 ct
+    p50  OFI=        50  ->  0.000000 $ = 0.0000 ct
+    p75  OFI=       225  ->  0.000001 $ = 0.0001 ct
+    p90  OFI=     1,099  ->  0.000006 $ = 0.0006 ct
+    p99  OFI=    37,462  ->  0.000195 $ = 0.0195 ct
+
+  Actual |dprice| at lag 1 (non-zero moves only):
+  p10=1.000ct  p25=1.000ct  p50=1.000ct  p75=1.000ct  p90=2.000ct
+  fraction of bars with zero price move: 79.7%
+  smallest observed non-zero moves: ['1.00ct', '1.00ct', '1.00ct', '1.00ct', '1.00ct', '1.00ct']
+
+  Roll (1984) implied spread (per market, using Cov(dp_t, dp_{t+1})):
+  markets estimated: 204 / 204
+  p25=0.000ct  median=0.686ct  p75=2.095ct  mean=1.346ct
+  markets with zero Roll spread (Cov >= 0): 72 (35.3%)
+
+  KEY COMPARISON:
+    Predicted reversal at median |OFI| (50 contracts):
+      |beta x median_OFI| = 0.0000 ct
+    Roll implied spread (median market):  0.686 ct
+    Roll half-spread:                     0.343 ct
+    Ratio (predicted / half-spread):      0.0001x
+    OFI needed to match half-spread:           658,515 contracts
+
+========================================================================
+DIAGNOSTIC 3 -- CONCENTRATION (thin markets / wide-spread bars)
+========================================================================
+Bounce is worst exactly where books are thin and spreads are wide.
+  Bounce    -> signal disappears in thick / narrow-spread splits.
+  Real sig. -> effect survives across liquidity regimes.
+
+  (a) Bar depth split  (n = trades per 5-min bar; p25=1  p75=4)
+    Thin bars  (n <= 1)                   beta=-1.525e-06  t= -7.32  p=0.0000  n= 56,863  G=102
+    Thick bars (n >= 4)                   beta=-5.248e-09  t= -2.22  p=0.0267  n= 31,788  G=102
+    All bars                              beta=-5.211e-09  t= -2.22  p=0.0266  n=120,651  G=102
+
+  (b) Market liquidity split  (total trades per market; median=5,008)
+    Thin markets  (< median)              beta= 7.646e-08  t=  0.65  p=0.5136  n= 30,185  G=57
+    Thick markets (>= median)             beta=-5.666e-09  t= -2.29  p=0.0222  n= 90,466  G=57
+    All markets                           beta=-5.211e-09  t= -2.22  p=0.0266  n=120,651  G=102
+
+  (c) Intrabar range split  (hi - lo within bar; p75=0.00ct)
+      Wide range -> thin book / bounce-prone; Narrow range -> tighter book.
+    Wide range   (>= 0.00ct)              beta=-5.211e-09  t= -2.22  p=0.0266  n=120,651  G=102
+    Narrow range (<  0.00ct)              insufficient data
+    All bars                              beta=-5.211e-09  t= -2.22  p=0.0266  n=120,651  G=102
+
+  (d) Most demanding filter: thick markets AND thick bars (both >= p75)
+    Thick mkt + thick bar                 beta=-5.754e-09  t= -2.30  p=0.0215  n= 26,208  G=57
+    All                                   beta=-5.211e-09  t= -2.22  p=0.0266  n=120,651  G=102
+
+========================================================================
+SUMMARY SCORECARD
+========================================================================
+Fill in after reading the numbers above:
+  Lag 2 incremental beta significant?     ___  (bounce -> no,  overreaction -> yes)
+  Cum beta grows more negative at k>1?    ___  (bounce -> flat, overreaction -> yes)
+  Pred. reversal at median OFI vs spread: ___  (bounce -> ~= half-spread)
+  Signal survives thick-bar split?        ___  (bounce -> weaker/gone)
+  Signal survives thick-market split?     ___  (bounce -> weaker/gone)
+  Signal survives wide-range exclusion?   ___  (bounce -> gone without wide bars)

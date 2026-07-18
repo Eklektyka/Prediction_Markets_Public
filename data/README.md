@@ -1,0 +1,1 @@
+Data house rules: everything Parquet; timestamps tz-aware UTC, converted once at ingestion; raw/ is append-only and never edited; every clean file has a generating script (no manual edits ever); holdout/ stays sealed until kill criteria are met; meta/ is the join layer.

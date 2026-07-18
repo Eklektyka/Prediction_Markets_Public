@@ -1,0 +1,46 @@
+========================================================================
+TRACK B PHASE 1 -- OFI QUINTILE SORT + CONTEMPORANEOUS SIGN CHECK
+========================================================================
+OFI z-scored within each market.  Ticker FE, SE clustered by fight.
+Contemporaneous expected POSITIVE; lagged (Phase 1) expected NEGATIVE.
+
+Panel: 120,855 bars  |  204 markets  |  102 fights
+       120,651 bars with contemporaneous dprice  |  120,651 bars with lag-1 dprice
+
+------------------------------------------------------------------------
+POOLED PEARSON CORRELATIONS  (no FE, raw z-OFI vs dprice)
+------------------------------------------------------------------------
+  r(ofi_z, dp_contemp) = -0.090767   [expected > 0]
+  r(ofi_z, dp_lag1)    = +0.020696   [expected < 0, Phase 1 result]
+
+------------------------------------------------------------------------
+OLS REGRESSIONS  (ticker FE, SE clustered by fight)
+------------------------------------------------------------------------
+  Horizon                       Beta            SE        t         p          95% CI                 n      G
+  --------------------------------------------------------------------------------------------------------------
+  contemporaneous        -1.8111e-03    4.4393e-04    -4.08    0.0000  [-2.681e-03, -9.410e-04]   120,651    102  <-- sign check (expect +)
+  lag 1 (Phase 1)         4.1599e-04    1.6332e-04     2.55    0.0109  [+9.587e-05, +7.361e-04]   120,651    102  <-- pre-reg result (expect -)
+
+  Sign check: beta_contemp = -1.8111e-03  -> NEGATIVE -- FLAG: sign may be wrong
+
+  *** WARNING: contemporaneous beta is negative. ***
+  *** If confirmed, Phase 1 reversal <-> continuation flip.  ***
+  *** Stop and investigate before re-running anything.        ***
+
+------------------------------------------------------------------------
+QUINTILE SORT  (z-scored OFI; bars sorted into 5 bins)
+------------------------------------------------------------------------
+  Quintile    Mean z-OFI    dp_contemp       dp_lag1    n_bars
+  ----------------------------------------------------------
+        Q1       -0.2061      -0.00060      +0.00049    24,171
+        Q2       -0.1245      -0.00012      -0.00008    24,172
+        Q3       -0.0970      +0.00017      -0.00013    24,173
+        Q4       -0.0716      +0.00013      -0.00008    24,186
+        Q5        0.4997      +0.00029      -0.00031    24,153
+
+  dp_contemp: price change in SAME bar [last_price(t) - last_price(t-1)]
+  dp_lag1:    price change in NEXT bar [last_price(t+1) - last_price(t)]
+  Expected: dp_contemp monotone increasing Q1->Q5 (sign check).
+            dp_lag1   monotone decreasing Q1->Q5 (Phase 1 reversal).
+
+Plot saved: qa\trackB_phase1_quintile_sort.png

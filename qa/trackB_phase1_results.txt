@@ -1,0 +1,8 @@
+beta=-5.212126e-09
+se=2.323193e-09
+t=-2.2435
+perm_p=0.0095
+CI=[-9.7656e-09,-6.5867e-10]
+G=102
+qualifying_fights=102
+verdict=SIGNAL SURVIVES pre-registered test — proceed to holdout scoring

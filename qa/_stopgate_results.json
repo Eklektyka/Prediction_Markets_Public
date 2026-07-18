@@ -1,0 +1,70 @@
+{
+  "all_pass": false,
+  "results": [
+    {
+      "market": "Radtke-vs-Frunza",
+      "mid": "648861",
+      "raw": 500,
+      "filtered": 220,
+      "api_yes": 120,
+      "api_no": 110,
+      "ratio": 1.8333333333333333,
+      "mad": 0.0014635555946483556,
+      "pass": "FAIL",
+      "ratio_ok": false,
+      "mad_ok": true
+    },
+    {
+      "market": "Wood-vs-Delgado",
+      "mid": "639347",
+      "raw": 705,
+      "filtered": 340,
+      "api_yes": 162,
+      "api_no": 161,
+      "ratio": 2.0987654320987654,
+      "mad": 0.017422055067836457,
+      "pass": "FAIL",
+      "ratio_ok": false,
+      "mad_ok": false
+    },
+    {
+      "market": "Bleda-vs-Horth",
+      "mid": "550473",
+      "raw": 930,
+      "filtered": 415,
+      "api_yes": 409,
+      "api_no": 43,
+      "ratio": 1.0146699266503667,
+      "mad": 0.00015739090676851952,
+      "pass": "PASS",
+      "ratio_ok": true,
+      "mad_ok": true
+    },
+    {
+      "market": "Usman-vs-Buckley",
+      "mid": "550463",
+      "raw": 1450,
+      "filtered": 654,
+      "api_yes": 371,
+      "api_no": 266,
+      "ratio": 1.7628032345013478,
+      "mad": 0.0018578635984721247,
+      "pass": "FAIL",
+      "ratio_ok": false,
+      "mad_ok": true
+    },
+    {
+      "market": "Kape-vs-Royval",
+      "mid": "839660",
+      "raw": 2925,
+      "filtered": 1380,
+      "api_yes": 455,
+      "api_no": 947,
+      "ratio": 3.032967032967033,
+      "mad": 0.0028946470588318094,
+      "pass": "FAIL",
+      "ratio_ok": false,
+      "mad_ok": true
+    }
+  ]
+}

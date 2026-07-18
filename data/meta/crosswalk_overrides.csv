@@ -1,0 +1,17 @@
+fight_id,action,correct_pm_id,pm_flip_override,note
+20250614_MENOUM,ACCEPT,,,Sy surname len=2 filtered by token min; Menifield matches — correct link
+20250621_ALESYG,ACCEPT,,,Sygula diacritic: Syguła→sygua after NFD strip does not match sygula — correct link
+20250621_MUSORO,ACCEPT,,,Orolbay Uulu: PM writes as Orolbai (transliteration variant) — correct link
+20250628_ROYVAN,ACCEPT,,,van dropped by stop-word filter; Royval matches — correct link
+20250823_MUDBOR,ACCEPT,,False,Su Mudaerji: PM fuses to Sumudaerji so mudaerji≠sumudaerji; Borjas matches — correct link; pm_flip_override=False (name-match score=0 but side is correct; MAD was 22c with flip)
+20250823_PAVCOR,ACCEPT,,,Cortes-Acosta hyphen merges to cortesacosta≠acosta; Pavlovich matches — correct link
+20250906_HARFER,ACCEPT,,,Fernandes booked vs Hardwick on Kalshi but actual fight was Ziam vs Fernandes; same Fernandes market — correct link
+20250906_SAIRUF,ACCEPT,,False,Saint-Denis hyphen merges to saintdenis≠saint+denis; Ruffy matches — correct link; pm_flip_override=False (name-match score=0 but side is correct; MAD was 20c with flip)
+20250913_LUNQUA,ACCEPT,,,Le surname len=2 filtered; Luna matches — correct link
+20250927_NOLCAM,ACCEPT,,,Campbell replaced by Elder as Nolan opponent; same Nolan market — correct link
+20251101_DULDEL,ACCEPT,,,del dropped as prefix; delvalle≠valle; Dulgarian matches — correct link
+20251115_DARSAI,ACCEPT,,,Saint-Denis hyphen (2nd instance); Dariush matches — correct link
+20251122_HERORO,ACCEPT,,,Orolbay Uulu transliteration (2nd instance); Hermansson matches — correct link
+20251122_SPIGAZ,REMAP,690296,,WRONG MATCH: Gaziev matched to Cortes-Acosta/Gaziev (pm=695777 slug=ufc-wal2-sha27-2025-11-22); correct is Spivac/Gaziev (pm=690296 slug=ufc-ser2-sha27-2025-11-22)
+20250531_GOFSEO,ACCEPT,,,"Ko/Goff goff-vs-ko bare-slug: side confirmed by named_outcome (PM outcomes=[Goff,Ko], name_score=1); MAD N/A — zero Kalshi volume on this prelim fight"
+20260614_LOPGAR,ACCEPT,,True,"Lopes/Garcia: PM outcome=mixed (both fighters in same condition_id); crosswalk_fixup MAD_orig=0.161 MAD_flip=0.003 — apply 1-price to PM side"
