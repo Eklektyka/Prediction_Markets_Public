@@ -1,6 +1,8 @@
 # UFC Cross-Venue Price Discovery: Kalshi × Polymarket
 
-Replication package for *Cross-Venue Price Discovery in UFC Prediction Markets* (2026).
+Replication package for [*Integration Without Leadership: Cross-Venue Price Discovery in UFC Prediction Markets*](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7194218) (SSRN 7194218, 2026).
+
+**Status:** Finished. Exhibits frozen at commit `bb5d695` (2026-07-17, seed=42).
 
 ---
 
@@ -60,8 +62,20 @@ All three scripts are deterministic (seed=42). Runtime for exhibit_freeze.py is 
 
 ---
 
+## Inherited Upstream Files
+
+This repository was originally forked from the Diercks / Katz / Wright
+Fed-rate prediction market project. Files authored by Jared Dean Katz
+(Vanderbilt University) remain in the git history. The `.RData` workspace
+from the upstream "Stagflation analysis" commit has been untracked
+(binary, not needed for this paper's replication).
+
+## License
+
+Code: MIT. Text and figures: CC BY 4.0.
+
 ## Citation
 
-> Michał Adamczewski, *Integration Without Leadership: Cross-Venue Price Discovery in UFC Prediction Markets (2026).
+> Michał Adamczewski, *Integration Without Leadership: Cross-Venue Price Discovery in UFC Prediction Markets* (2026).
 
 https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7194218
